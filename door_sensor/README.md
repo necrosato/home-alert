@@ -12,7 +12,9 @@ are much faster than an arduino and have a full TCP/IP stack.
 
 # Sensor
 In practice I will use a (reed switch)[https://en.wikipedia.org/wiki/Reed_switch]
-on the microcontroller with a magnet attached to the door. Assuming the switch
-is normally open when no magnetic field is present, when the door opens, the
-reed switch will be opened and pull a pin low on the microcontroller.
+on the microcontroller with a magnet attached to the door. The switch is
+normally open when no magnetic field is present, and closes when a magnetic
+field is introduced. When the door opens, the magnet on the door moves away
+from the switch, so it opens. A pull up resistor will pull a pin high on the
+microcontroller.
 

@@ -12,15 +12,25 @@
 // This might need to be included when using some esp8266 arduino cores.
 //#include "pins_arduino.h"
 
-const char* ssid     = "";
-const char* password = "";
-const char* endpoint = "http://10.0.0.138:5000/front_door_open";
+// Wifi Info
+const char* ssid      = "";
+const char* password  = "";
+
+// Main Server Info
+String server_ip      = "10.0.0.138";
+String server_port    = "5000";
+String endpoint       = "/front_door_open";
+String request_string = "http://" + server_ip + ":" + server_port + endpoint;
+const char* request   = request_string.c_str();
 
 int wifi_status;
 
-// HIGH for a closed switch, LOW for open.
+// Pull up resistor on switch pin
+// LOW for a closed switch, HIGH for open.
 int switch_pin = D6;
 int switch_status;
+// Status led, LOW when switch closed, high when open
+int led_pin = BUILTIN_LED;
 
 void setup() {
   delay(1000);
@@ -31,44 +41,57 @@ void setup() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);             // Connect to the network
   Serial.print("Connecting to ");
-  Serial.print(ssid); Serial.println(" ...");
+  Serial.print(ssid);
+  Serial.println(" ...");
 
   int i = 0;
   while ((wifi_status = WiFi.status()) != WL_CONNECTED) { // Wait for the Wi-Fi to connect
     delay(1000);
-    Serial.print(++i); Serial.print(' ');
+    Serial.print(++i);
+    Serial.print(' ');
   }
 
   Serial.println('\n');
   Serial.println("Connection established!");
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
-  pinMode(switch_pin, INPUT);
+  pinMode(switch_pin, INPUT_PULLUP);
+  pinMode(led_pin, OUTPUT);
   switch_status = digitalRead(switch_pin);
+  digitalWrite(led_pin, !switch_status);
 }
 
 void OnDoorOpen() {
+  Serial.println("Door opened");
+  Serial.print("Sending request to main server: ");
+  Serial.println(request);
   HTTPClient http;
-  http.begin(endpoint);
+  http.begin(request);
   int ret_code = http.GET();
   if (ret_code < 0) {
     // TODO: Don't ignore failures.
     Serial.println("Endpoint request failed");
   }
-  Serial.println("Door opened");
 }
 
 void OnDoorClose() {
   Serial.println("Door closed");
 }
 
+// This detects change in switch state
 void CheckDoorOpen() {
   int switch_status_last = switch_status;
   switch_status = digitalRead(switch_pin);
-  if (switch_status == LOW && switch_status != switch_status_last) {
-    OnDoorOpen();
-  } if (switch_status == HIGH && switch_status != switch_status_last) {
-    OnDoorClose();
+  if (switch_status != switch_status_last) {
+    // TODO: This is a hack because my dev board's builtin led is connected to vcc,
+    // so LOW turns it on and HIGH turns it off.
+    // See https://github.com/nodemcu/nodemcu-devkit-v1.0/issues/16
+    digitalWrite(led_pin, !switch_status);
+    if (switch_status == HIGH) {
+      OnDoorOpen();
+    } else {
+      OnDoorClose();
+    }
   }
 }
 
