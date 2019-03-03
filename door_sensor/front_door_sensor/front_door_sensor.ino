@@ -20,7 +20,7 @@ int wifi_status;
 
 // HIGH for a closed switch, LOW for open.
 int switch_pin = D6;
-int switch_status = HIGH;
+int switch_status;
 
 void setup() {
   delay(1000);
@@ -44,6 +44,7 @@ void setup() {
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
   pinMode(switch_pin, INPUT);
+  switch_status = digitalRead(switch_pin);
 }
 
 void OnDoorOpen() {

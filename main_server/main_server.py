@@ -28,10 +28,16 @@ class HomeAlert():
     '''
     def __init__(self, smtp_info):
         self.smtp_info = smtp_info
-        self.smtp = smtplib.SMTP(host=smtp_info['smtp_host'], port=smtp_info['smtp_port'])
-        self.smtp.starttls()
-        self.smtp.login(smtp_info['user_address'], smtp_info['user_pass'])
+        self.smtp_connect()
         self.app = Flask('Home Alert Main Server')
+
+    def smtp_connect(self):
+        '''
+        Opens/refreshes an smtp connection
+        '''
+        self.smtp = smtplib.SMTP(host=self.smtp_info['smtp_host'], port=self.smtp_info['smtp_port'])
+        self.smtp.starttls()
+        self.smtp.login(self.smtp_info['user_address'], self.smtp_info['user_pass'])
 
 
     def get_mime_message(self, subject, body):
@@ -47,7 +53,10 @@ class HomeAlert():
 
 
     def index(self):
-        return 'This is the index.'
+        '''
+        Index page, default route.
+        '''
+        return 'This is the index, it currently does nothing.'
 
 
     def front_door_open(self):
@@ -57,7 +66,12 @@ class HomeAlert():
         subject = 'Home Alert: Door Open'
         time = str(datetime.datetime.now(pytz.timezone('America/Los_Angeles')))
         body = 'Front door was opened on ' + time
-        self.smtp.send_message(self.get_mime_message(subject, body))
+        # Might need to catch an exception to refresh the connection
+        try:
+            self.smtp.send_message(self.get_mime_message(subject, body))
+        except:
+            self.smtp_connect()
+            self.smtp.send_message(self.get_mime_message(subject, body))
         return body
 
 
