@@ -66,11 +66,14 @@ class HomeAlert():
         '''
         lock = request.args.get('lock')
         if lock is not None:
-            try:
-                self.front_door_lock = bool(lock)
-            except:
+            if lock == 'True':
+                self.front_door_lock = True;
+            elif lock == 'False':
+                self.front_door_lock = False;
+            else:
                 return 'Cannot pass arg "lock" with value other than "True" or "False".'
-        return 'Front door lock: ' + lock
+            return 'Front door lock: ' + lock
+        return 'Set front door lock. Notifications will be sent for a locked door. GET lock=True or lock=False.'
 
 
     def front_door_open(self):
@@ -78,7 +81,7 @@ class HomeAlert():
         Endpoint method for when front door opens
         '''
         time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
-        body = 'Front door was opened on ' + time
+        body = 'Front door was opened on ' + str(time)
         # if the lock is true, alert
         if self.front_door_lock:
             subject = 'Home Alert: Door Open'
