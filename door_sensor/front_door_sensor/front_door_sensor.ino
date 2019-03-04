@@ -30,6 +30,11 @@ int wifi_status;
 int switch_pin = D6;
 int switch_status;
 // Status led, LOW when switch closed, high when open
+// TODO: I should probably wire an external led into my circuit which lights up
+// when the switch closes. In reality that is what it is used for, but the blocking nature of
+// http requests tend to hold the led in a state even when the switch is in fact in another state.
+// But the onboard led is easy and clean, no extra wires. In reality the delay is much shorter than the
+// time to open a door, so it will stay for now.
 int led_pin = BUILTIN_LED;
 
 void setup() {
