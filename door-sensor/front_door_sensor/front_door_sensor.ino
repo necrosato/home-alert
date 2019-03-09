@@ -19,7 +19,7 @@ const char* password  = "";
 // Main Server Info
 String server_ip      = "10.0.0.138";
 String server_port    = "5000";
-String endpoint       = "/front_door_open";
+String endpoint       = "/controller?id=door_front&trigger=True";
 String request_string = "http://" + server_ip + ":" + server_port + endpoint;
 const char* request   = request_string.c_str();
 
