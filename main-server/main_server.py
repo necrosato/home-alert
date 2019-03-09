@@ -30,6 +30,8 @@ class HomeAlert():
         self.smtp_info = smtp_info
         self.smtp_connect()
         self.app = Flask('Home Alert Main Server')
+        self.controllers = { 'door_front': { 'armed': True } }
+        # TODO;
         self.front_door_lock = False
 
     def smtp_connect(self):
@@ -60,6 +62,73 @@ class HomeAlert():
         return 'This is the index, it currently does nothing.'
 
 
+    def handle_controller_arm(self, controller_id):
+        '''
+        This function handles the current request's 'arm' argument if one is present. Does nothing if not present.
+        Requires controller id.
+        Retuns a message about the arm status, or a help/error message given the value passed.
+        '''
+        response_str = ''
+        arm = request.args.get('arm')
+        if arm is not None:
+            if arm == 'True':
+                self.controllers[controller_id]['armed'] = True;
+            elif arm == 'False':
+                self.controllers[controller_id]['armed'] = False;
+            elif arm == 'Help':
+                return 'Use argument "arm=True" or "arm=False" to set controller arm status. '\
+                       'Email notifications will be sent for an armed conroller.'
+            else:
+                return 'Cannot pass arg "arm" with value other than "True", "False", or "Help".'
+        return 'Armed: ' + str(self.controllers[controller_id]['armed'])
+
+
+    def handle_controller_trigger(self, controller_id):
+        '''
+        This function handles the current request's 'trigger' argument if one is present. Does nothing if not present.
+        Requires controller id.
+        Returns a message containing the request time if 'open=True'.
+        '''
+        response_str = ''
+        controller_trigger = request.args.get('trigger')
+        if controller_trigger is not None:
+            # TODO: Change open to take the open time
+            if controller_trigger == 'True':
+                time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
+                response_str += 'Recieved trigger: ' + str(time)
+                # if the arm is true, alert
+                if self.controllers[controller_id]['armed']:
+                    subject = 'Home Alert: ' + controller_id
+                    msg = self.get_mime_message(subject, response_str)
+                    # Might need to catch an exception to refresh the connection
+                    try:
+                        self.smtp.send_message()
+                    except:
+                        self.smtp_connect()
+                        self.smtp.send_message(self.get_mime_message(subject, response_str))
+        return response_str
+
+
+    def controller(self):
+        '''
+        This sends controller commands via get requests.
+        Requests must have a 'id' argument with the controller's id.
+        Optionally, an 'arm' value can be passed True or False
+        This can arm and disarm the controller via the arm argument from a get request
+        '''
+        controller_id = request.args.get('id')
+        if controller_id is None:
+            return 'Controller must be given an "id" argument in request.'
+        elif controller_id not in self.controllers:
+            return 'Invalid controller id.'
+        response_str = 'Controller ID: ' + controller_id
+        response_str += '<br>' + self.handle_controller_arm(controller_id)
+        response_str += '<br>' + self.handle_controller_trigger(controller_id)
+        return response_str
+
+
+    # TODO: Remove
+    # Deprecated, use door
     def front_door(self):
         '''
         This can lock and unlock the door via the lock argument from a get request
@@ -76,6 +145,8 @@ class HomeAlert():
         return 'Set front door lock. Notifications will be sent for a locked door. GET lock=True or lock=False.'
 
 
+    # TODO: Remove
+    # Deprecated, use door
     def front_door_open(self):
         '''
         Endpoint method for when front door opens
@@ -125,6 +196,8 @@ def main():
             endpoint_name='front_door_open', handler=home_alert.front_door_open)
     home_alert.add_endpoint(endpoint='/front_door',
             endpoint_name='front_door', handler=home_alert.front_door)
+    home_alert.add_endpoint(endpoint='/controller',
+            endpoint_name='controller', handler=home_alert.controller)
     # Start web server
     home_alert.run()
 
