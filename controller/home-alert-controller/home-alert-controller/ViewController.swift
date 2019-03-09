@@ -43,7 +43,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func lockButton(sender: UIButton) {
-      let lockUrl = ViewController.serverUrl + "front_door?lock=True"
+      let lockUrl = ViewController.serverUrl + "controller?id=door_front&arm=True"
       let response = makeRequest(url: lockUrl)
       var alertTitle = "Email notifications on"
       var alertMessage = response.responseString
@@ -58,9 +58,24 @@ class ViewController: UIViewController {
     }
 
     @IBAction func unlockButton(sender: UIButton) {
-      let unlockUrl = ViewController.serverUrl + "front_door?lock=False"
+      let unlockUrl = ViewController.serverUrl + "controller?id=door_front&arm=False"
       let response = makeRequest(url: unlockUrl)
       var alertTitle = "Email notifications off"
+      var alertMessage = response.responseString
+      if response.statusCode != 200 {
+        alertTitle = "Error: " + String(response.statusCode)
+        alertMessage = "Did not successfully make request to server."
+      }
+      let alertController = UIAlertController(title: alertTitle, message: alertMessage,
+        preferredStyle: UIAlertController.Style.alert)
+      alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+      present(alertController, animated: true, completion: nil)
+    }
+
+    @IBAction func statusButton(sender: UIButton) {
+      let statusUrl = ViewController.serverUrl + "controller?id=door_front"
+      let response = makeRequest(url: statusUrl)
+      var alertTitle = "Front door status:"
       var alertMessage = response.responseString
       if response.statusCode != 200 {
         alertTitle = "Error: " + String(response.statusCode)

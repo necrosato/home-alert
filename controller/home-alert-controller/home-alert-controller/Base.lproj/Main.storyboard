@@ -26,7 +26,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tGA-UL-Den">
-                                <rect key="frame" x="124" y="129" width="126" height="79"/>
+                                <rect key="frame" x="124" y="157" width="126" height="79"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.0" blue="0.081321229716778021" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Lock">
@@ -37,7 +37,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i59-nH-ngc">
-                                <rect key="frame" x="124" y="268" width="126" height="79"/>
+                                <rect key="frame" x="124" y="310" width="126" height="79"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.0" green="1" blue="0.42247806813325806" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Unlock">
@@ -45,6 +45,17 @@
                                 </state>
                                 <connections>
                                     <action selector="unlockButtonWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dqq-5O-KFa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jiS-ME-XOX">
+                                <rect key="frame" x="124" y="462" width="126" height="79"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.58749226362314699" green="0.60899044689119175" blue="0.58786133573212607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Status">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="statusButtonWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cE4-Ce-nzf"/>
                                 </connections>
                             </button>
                         </subviews>
