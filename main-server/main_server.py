@@ -31,8 +31,6 @@ class HomeAlert():
         self.smtp_connect()
         self.app = Flask('Home Alert Main Server')
         self.controllers = { 'door_front': { 'armed': True } }
-        # TODO;
-        self.front_door_lock = False
 
     def smtp_connect(self):
         '''
@@ -127,44 +125,6 @@ class HomeAlert():
         return response_str
 
 
-    # TODO: Remove
-    # Deprecated, use door
-    def front_door(self):
-        '''
-        This can lock and unlock the door via the lock argument from a get request
-        '''
-        lock = request.args.get('lock')
-        if lock is not None:
-            if lock == 'True':
-                self.front_door_lock = True;
-            elif lock == 'False':
-                self.front_door_lock = False;
-            else:
-                return 'Cannot pass arg "lock" with value other than "True" or "False".'
-            return 'Front door lock: ' + lock
-        return 'Set front door lock. Notifications will be sent for a locked door. GET lock=True or lock=False.'
-
-
-    # TODO: Remove
-    # Deprecated, use door
-    def front_door_open(self):
-        '''
-        Endpoint method for when front door opens
-        '''
-        time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
-        body = 'Front door was opened on ' + str(time)
-        # if the lock is true, alert
-        if self.front_door_lock:
-            subject = 'Home Alert: Door Open'
-            # Might need to catch an exception to refresh the connection
-            try:
-                self.smtp.send_message(self.get_mime_message(subject, body))
-            except:
-                self.smtp_connect()
-                self.smtp.send_message(self.get_mime_message(subject, body))
-        return body
-
-
     def run(self):
         '''
         Run the flask app
@@ -192,10 +152,6 @@ def main():
     # Add endpoints
     home_alert.add_endpoint(endpoint='/',
             endpoint_name='index', handler=home_alert.index)
-    home_alert.add_endpoint(endpoint='/front_door_open',
-            endpoint_name='front_door_open', handler=home_alert.front_door_open)
-    home_alert.add_endpoint(endpoint='/front_door',
-            endpoint_name='front_door', handler=home_alert.front_door)
     home_alert.add_endpoint(endpoint='/controller',
             endpoint_name='controller', handler=home_alert.controller)
     # Start web server
