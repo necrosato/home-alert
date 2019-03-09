@@ -1,0 +1,3 @@
+[submodule "video-security/streaming-server/rtsp-server"]
+	path = video-security/streaming-server/rtsp-server
+	url = https://github.com/revmischa/rtsp-server
