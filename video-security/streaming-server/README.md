@@ -19,10 +19,19 @@ Streams can be sent to port 10001 and retrieved from port 10000
 
 To send:
 ```
- ffmpeg -f avfoundation -re -i "0" -f rtsp -muxdelay 0.1 rtsp://ip.of.raspberry.pi:10001/stream_name
+ffmpeg -f avfoundation -re -i "0" -f rtsp -muxdelay 0.1 rtsp://ip.of.raspberry.pi:10001/stream_name
 ```
+In theory both video and audio can be selected with
+```
+ffmpeg -f avfoundation -re -i "0:0" -f rtsp -muxdelay 0.1 rtsp://ip.of.raspberry.pi:10001/stream_name
+```
+but I have yet to achieve success.
 
 And to retrieve:
 ```
 ffmpeg -i rtsp://ip.of.raspberry.pi:10000/stream_name out.mp4
+```
+or to playback:
+```
+ffplay -i rtsp://ip.of.raspberry.pi:10000/stream_name
 ```
