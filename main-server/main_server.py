@@ -3,7 +3,7 @@ import argparse
 import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from email.mime.text import MIMEText, MIMEImage
 import datetime
 import pytz
 
@@ -96,17 +96,27 @@ class HomeAlert():
         response_str = ''
         controller_trigger = request.args.get('trigger')
         if controller_trigger is not None:
-            # TODO: Change open to take the open time
+            # TODO: Change open to take the open time (maybe?)
             if controller_trigger == 'True':
-                # Save some photos 
-                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '2', 10, 1280, 720)
-
                 time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
                 response_str += 'Recieved trigger: ' + str(time)
+
+                # Save some photos 
+                # TODO: remove hardcoded directory
+                photo_dir = '/home/pi/photos/' + str(time)
+                os.mkdir(photo_dir)
+                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '2', 10, 1280, 720)
+
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
                     subject = 'Home Alert: ' + controller_id
                     msg = self.get_mime_message(subject, response_str)
+                    # attach image
+                    # TODO: Make this its own function, and less ugly
+                    with open(photo_dir + '/photo_01.jpg') as photo:
+                        img = MIMEImage(photo.read())
+                        msg.attach(img)
+                    
                     # Might need to catch an exception to refresh the connection
                     try:
                         self.smtp.send_message()
