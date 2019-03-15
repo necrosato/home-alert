@@ -99,7 +99,7 @@ class HomeAlert():
             # TODO: Change open to take the open time
             if controller_trigger == 'True':
                 # Save some photos 
-                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '4', 10, 1280, 720)
+                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '2', 10, 1280, 720)
 
                 time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
                 response_str += 'Recieved trigger: ' + str(time)
