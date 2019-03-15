@@ -17,5 +17,5 @@ def photo_burst(input_device, prefix_dir, fps, num_photos, width, height):
     assert (os.path.exists(input_device)),'{} does not exist.'.format(input_device)
     dims= str(width) + 'x' + str(height)
     cmd = ['ffmpeg', '-video_size', dims, '-i', input_device,
-           '-vf', 'fps'+fps, '-vframes', str(num_photos), photo_dir + '/photo_%02d.jpg']
+           '-vf', 'fps='+fps, '-vframes', str(num_photos), photo_dir + '/photo_%02d.jpg']
     subprocess.check_call(cmd)
