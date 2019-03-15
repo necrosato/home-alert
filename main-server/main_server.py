@@ -115,7 +115,7 @@ class HomeAlert():
                     # attach image
                     # TODO: Make this its own function, and less ugly
                     with open(photo_dir + '/photo_01.jpg', 'rb') as photo:
-                        img = MIMEImage(photo.read())
+                        img = MIMEImage(photo.read(), _subtype='jpeg')
                         msg.attach(img)
                     
                     # Might need to catch an exception to refresh the connection
