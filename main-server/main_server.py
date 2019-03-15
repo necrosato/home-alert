@@ -106,7 +106,7 @@ class HomeAlert():
                 # TODO: remove hardcoded directory
                 photo_dir = '/home/pi/photos/' + str(time)
                 os.mkdir(photo_dir)
-                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '2', 10, 1280, 720)
+                photo_burst.photo_burst('/dev/video0', photo_dir, '2', 10, 1280, 720)
 
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
