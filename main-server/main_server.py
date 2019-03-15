@@ -7,6 +7,12 @@ from email.mime.text import MIMEText
 import datetime
 import pytz
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir + '/video-security/photo-burst')
+import photo_burst
+
 # This is where home alerts get sent
 NOTIFY_EMAILS = ['sato@naookie.com']
 
@@ -92,6 +98,9 @@ class HomeAlert():
         if controller_trigger is not None:
             # TODO: Change open to take the open time
             if controller_trigger == 'True':
+                # Save some photos 
+                photo_burst.photo_burst('/dev/video0', '/home/pi/photos', '4', 10, 1280, 720)
+
                 time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
                 response_str += 'Recieved trigger: ' + str(time)
                 # if the arm is true, alert
