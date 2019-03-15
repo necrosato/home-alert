@@ -114,7 +114,7 @@ class HomeAlert():
                     msg = self.get_mime_message(subject, response_str)
                     # attach image
                     # TODO: Make this its own function, and less ugly
-                    with open(photo_dir + '/photo_01.jpg') as photo:
+                    with open(photo_dir + '/photo_01.jpg', 'rb') as photo:
                         img = MIMEImage(photo.read())
                         msg.attach(img)
                     
