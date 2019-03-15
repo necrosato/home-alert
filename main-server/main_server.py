@@ -3,7 +3,8 @@ import argparse
 import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText, MIMEImage
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 import datetime
 import pytz
 
