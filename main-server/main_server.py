@@ -4,7 +4,6 @@ import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 import datetime
 import pytz
@@ -49,7 +48,7 @@ class HomeAlert():
         self.smtp.login(self.smtp_info['user_address'], self.smtp_info['user_pass'])
 
 
-    def get_mime_message(self, subject, body):
+    def get_mime_message(self, subject, body, files):
         '''
         Builds a MIME message and returns it.
         '''
@@ -58,6 +57,13 @@ class HomeAlert():
         msg['To'] = ', '.join(NOTIFY_EMAILS)
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
+        # attach files
+        for attachment_file in files:
+            with open(attachment_file, 'rb') as f:
+                name = os.path.basename(attachment_file)
+                attachment = MIMEApplication(f.read(), Name=name)
+                attachment['Content-Disposition'] = 'attachment; filename="%s"' % name
+                msg.attach(attachment)
         return msg
 
 
@@ -108,26 +114,18 @@ class HomeAlert():
                 photo_dir = '/home/pi/photos/' + str(time)
                 os.mkdir(photo_dir)
                 photo_burst.photo_burst('/dev/video0', photo_dir, '2', 10, 1280, 720)
+                photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg'
 
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
                     subject = 'Home Alert: ' + controller_id
-                    msg = self.get_mime_message(subject, response_str)
-                    # attach image
-                    # TODO: Make this its own function, and less ugly
-                    img_path = photo_dir + '/photo_01.jpg'
-                    with open(img_path, 'rb') as photo:
-                        attachment_name = os.path.basename(img_path)
-                        attachment = MIMEApplication(photo.read(), Name=attachment_name)
-                        attachment['Content-Disposition'] = 'attachment; filename="%s"' % attachment_name
-                        msg.attach(attachment)
-                    
+                    msg = self.get_mime_message(subject, response_str, photos)
                     # Might need to catch an exception to refresh the connection
                     try:
                         self.smtp.send_message(msg)
                     except:
                         self.smtp_connect()
-                        self.smtp.send_message(self.get_mime_message(subject, response_str))
+                        self.smtp.send_message(msg)
         return response_str
 
 
