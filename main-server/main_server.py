@@ -116,15 +116,15 @@ class HomeAlert():
                     # attach image
                     # TODO: Make this its own function, and less ugly
                     img_path = photo_dir + '/photo_01.jpg'
-                    attachment_name = os.path.basename(img_path)
                     with open(img_path, 'rb') as photo:
+                        attachment_name = os.path.basename(img_path)
                         attachment = MIMEApplication(photo.read(), Name=attachment_name)
-                    attachment['Content-Disposition'] = 'attachment; filename="%s"' % attachment_name
-                    msg.attach(attachment)
+                        attachment['Content-Disposition'] = 'attachment; filename="%s"' % attachment_name
+                        msg.attach(attachment)
                     
                     # Might need to catch an exception to refresh the connection
                     try:
-                        self.smtp.send_message()
+                        self.smtp.send_message(msg)
                     except:
                         self.smtp_connect()
                         self.smtp.send_message(self.get_mime_message(subject, response_str))
