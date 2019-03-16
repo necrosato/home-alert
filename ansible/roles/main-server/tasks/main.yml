@@ -1,0 +1,9 @@
+---
+- name: main server apt dependencies
+  apt:
+    name:
+      - vim
+      - git
+      - python3
+      - python3-pip
+    update_cache: yes

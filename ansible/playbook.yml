@@ -1,0 +1,6 @@
+---
+- hosts: main-server
+  become: true
+  roles:
+    - main-server
+    - rtsp-server
