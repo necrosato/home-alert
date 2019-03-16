@@ -105,15 +105,17 @@ class HomeAlert():
         controller_trigger = request.args.get('trigger')
         if controller_trigger is not None:
             # TODO: Change open to take the open time (maybe?)
+            # Pro: More accurate time when the duur was actually opened
+            # Con: Microcontroller must keep synced time, no way to verify
             if controller_trigger == 'True':
                 time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
                 response_str += 'Recieved trigger: ' + str(time)
 
                 # Save some photos 
-                # TODO: remove hardcoded directory
+                # TODO: remove hardcoded directory and photo names
                 photo_dir = '/home/pi/photos/' + str(time)
                 os.mkdir(photo_dir)
-                photo_burst.photo_burst('/dev/video0', photo_dir, '2', 10, 1280, 720)
+                photo_burst.photo_burst_ffmpeg('/dev/video0', photo_dir, 'photo_', '2', 10, 1280, 720)
                 photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
 
                 # if the arm is true, alert
