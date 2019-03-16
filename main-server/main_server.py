@@ -5,6 +5,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
 import datetime
 import pytz
 
@@ -116,11 +117,10 @@ class HomeAlert():
                     # TODO: Make this its own function, and less ugly
                     img_path = photo_dir + '/photo_01.jpg'
                     with open(img_path, 'rb') as photo:
-                        img_text = MIMEText('<br><img src="cid:%s"><br>' % (img_path), 'html')  
-                        msg.attach(img_text)
-                        img = MIMEImage(photo.read(), _subtype='jpeg')
-                        img.add_header('Content-ID', '<{}>'.format(img_path))
-                        msg.attach(img)
+                        attachment_name = os.path.basename(img_path)
+                        attachment = MIMEApplication(photo.read(), Name=attachment_name)
+                        attachment['Content-Disposition'] = 'attachment; filename="%s"' % attachment_name
+                        msg.attach(attachment)
                     
                     # Might need to catch an exception to refresh the connection
                     try:
