@@ -4,8 +4,15 @@ import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 import datetime
 import pytz
+
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir + '/video-security/photo-burst')
+import photo_burst
 
 # This is where home alerts get sent
 NOTIFY_EMAILS = ['sato@naookie.com']
@@ -41,7 +48,7 @@ class HomeAlert():
         self.smtp.login(self.smtp_info['user_address'], self.smtp_info['user_pass'])
 
 
-    def get_mime_message(self, subject, body):
+    def get_mime_message(self, subject, body, files):
         '''
         Builds a MIME message and returns it.
         '''
@@ -50,6 +57,13 @@ class HomeAlert():
         msg['To'] = ', '.join(NOTIFY_EMAILS)
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
+        # attach files
+        for attachment_file in files:
+            with open(attachment_file, 'rb') as f:
+                name = os.path.basename(attachment_file)
+                attachment = MIMEApplication(f.read(), Name=name)
+                attachment['Content-Disposition'] = 'attachment; filename="%s"' % name
+                msg.attach(attachment)
         return msg
 
 
@@ -70,9 +84,9 @@ class HomeAlert():
         arm = request.args.get('arm')
         if arm is not None:
             if arm == 'True':
-                self.controllers[controller_id]['armed'] = True;
+                self.controllers[controller_id]['armed'] = True
             elif arm == 'False':
-                self.controllers[controller_id]['armed'] = False;
+                self.controllers[controller_id]['armed'] = False
             elif arm == 'Help':
                 return 'Use argument "arm=True" or "arm=False" to set controller arm status. '\
                        'Email notifications will be sent for an armed conroller.'
@@ -90,20 +104,30 @@ class HomeAlert():
         response_str = ''
         controller_trigger = request.args.get('trigger')
         if controller_trigger is not None:
-            # TODO: Change open to take the open time
+            # TODO: Change open to take the open time (maybe?)
+            # Pro: More accurate time when the duur was actually opened
+            # Con: Microcontroller must keep synced time, no way to verify
             if controller_trigger == 'True':
                 time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
                 response_str += 'Recieved trigger: ' + str(time)
+
+                # Save some photos 
+                # TODO: remove hardcoded directory and photo names
+                photo_dir = '/home/pi/photos/' + str(time)
+                os.mkdir(photo_dir)
+                photo_burst.photo_burst_ffmpeg('/dev/video0', photo_dir, 'photo_', '2', 10, 1280, 720)
+                photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
+
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
                     subject = 'Home Alert: ' + controller_id
-                    msg = self.get_mime_message(subject, response_str)
+                    msg = self.get_mime_message(subject, response_str, photos)
                     # Might need to catch an exception to refresh the connection
                     try:
-                        self.smtp.send_message()
+                        self.smtp.send_message(msg)
                     except:
                         self.smtp_connect()
-                        self.smtp.send_message(self.get_mime_message(subject, response_str))
+                        self.smtp.send_message(msg)
         return response_str
 
 
