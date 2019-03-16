@@ -114,9 +114,12 @@ class HomeAlert():
                     msg = self.get_mime_message(subject, response_str)
                     # attach image
                     # TODO: Make this its own function, and less ugly
-                    with open(photo_dir + '/photo_01.jpg', 'rb') as photo:
+                    img_path = photo_dir + '/photo_01.jpg'
+                    with open(img_path, 'rb') as photo:
+                        img_text = MIMEText('<br><img src="cid:%s"><br>' % (img_path), 'html')  
+                        msg.attach(img_text)
                         img = MIMEImage(photo.read(), _subtype='jpeg')
-                        img.add_header('Content-ID', '<{}>'.format(photo_dir + '/photo_01.jpg'))
+                        img.add_header('Content-ID', '<{}>'.format(img_path))
                         msg.attach(img)
                     
                     # Might need to catch an exception to refresh the connection
