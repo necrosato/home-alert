@@ -84,9 +84,9 @@ class HomeAlert():
         arm = request.args.get('arm')
         if arm is not None:
             if arm == 'True':
-                self.controllers[controller_id]['armed'] = True;
+                self.controllers[controller_id]['armed'] = True
             elif arm == 'False':
-                self.controllers[controller_id]['armed'] = False;
+                self.controllers[controller_id]['armed'] = False
             elif arm == 'Help':
                 return 'Use argument "arm=True" or "arm=False" to set controller arm status. '\
                        'Email notifications will be sent for an armed conroller.'
@@ -114,7 +114,7 @@ class HomeAlert():
                 photo_dir = '/home/pi/photos/' + str(time)
                 os.mkdir(photo_dir)
                 photo_burst.photo_burst('/dev/video0', photo_dir, '2', 10, 1280, 720)
-                photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg'
+                photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
 
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
