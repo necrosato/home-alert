@@ -7,7 +7,7 @@
       - video
     shell: /bin/bash
 
-- name: main server apt dependencies
+- name: install main server apt dependencies
   apt:
     name:
       - vim
@@ -16,6 +16,12 @@
       - python3-pip
       - awscli
       - ffmpeg
+      # openCV devepencies
+      - libatlas3-base
+      - libjasper-dev
+      - libopencv-dev
+      - libgstreamer1.0-dev
+      - libqtgstreamer-dev
     update_cache: yes
 
 - name: update awscli using pip
@@ -31,7 +37,7 @@
     owner: main-server
     group: main-server
 
-- name: aws config
+- name: copy aws config
   copy:
     src: "{{ playbook_dir }}/secrets/aws/config"
     dest: "/home/main-server/.aws/config"
@@ -39,7 +45,7 @@
     group: main-server
     mode: 0400
 
-- name: aws credentials
+- name: copy aws credentials
   copy:
     src: "{{ playbook_dir }}/secrets/aws/credentials"
     dest: "/home/main-server/.aws/credentials"
@@ -52,6 +58,8 @@
     name:
       - flask
       - pytz
+      # This one takes a long time > 10 mins
+      - opencv-python
     state: latest
     executable: /usr/bin/pip3
 
@@ -62,19 +70,23 @@
     owner: main-server
     group: main-server
 
-- name: copy main server script
+- name: copy main server module
   copy:
     src: "{{ playbook_dir }}/../main-server/main_server.py"
     dest: "/home/main-server/main-server/main_server.py"
     owner: main-server
     group: main-server
+  notify:
+    - restart main-server
 
-- name: copy photo_burst module
+- name: copy camera module
   copy:
-    src: "{{ playbook_dir }}/../video-security/photo-burst/photo_burst.py"
-    dest: "/home/main-server/main-server/photo_burst.py"
+    src: "{{ playbook_dir }}/../main-server/home_alert_camera.py"
+    dest: "/home/main-server/main-server/home_alert_camera.py"
     owner: main-server
     group: main-server
+  notify:
+    - restart main-server
 
 - name: copy smtp info
   copy:
@@ -83,6 +95,8 @@
     owner: main-server
     group: main-server
     mode: 0600
+  notify:
+    - restart main-server
 
 - name: copy main-server systemd service unit file
   copy:
