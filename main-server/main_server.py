@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import datetime
 import pytz
+import subprocess
 
 import os,sys,inspect
 # Add other path if in repo
@@ -114,7 +115,8 @@ class HomeAlert():
 
                 # Save some photos 
                 # TODO: remove hardcoded directory and photo names
-                photo_dir = '/home/main-server/photos/door_front/' + str(time)
+                photo_suffix = 'photos/door_front/' + str(time)
+                photo_dir = '/home/main-server/' + photo_suffix
                 os.mkdir(photo_dir)
                 photo_burst.photo_burst_ffmpeg('/dev/video0', photo_dir, 'photo_', '2', 10, 1280, 720)
                 photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
@@ -129,6 +131,13 @@ class HomeAlert():
                     except:
                         self.smtp_connect()
                         self.smtp.send_message(msg)
+
+                # Move photos to s3
+                s3_cmd = ['aws', 's3', 'mv', photo_dir,
+                          's3://com.necrosato.home-alert/' + photo_suffix, '--recursive']
+                subprocess.check_call(s3_cmd)
+                os.rmdir(photo_dir)
+
         return response_str
 
 
