@@ -5,6 +5,8 @@ This is a web server with endpoints to collect data from other devices on the ne
 It will send out alerts via email when trigger conditions are met.
 It could possibly send requests back to other devices on the network in the futur.
 
+## Installation
+
 ## SMTP Info
 
 The server needs a json file with smtp info to send emails.
