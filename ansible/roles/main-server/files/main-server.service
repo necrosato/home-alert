@@ -1,0 +1,14 @@
+[Unit]
+Description=Necrosato's Home Alert Main Server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=main-server
+ExecStart=/usr/bin/python3 /home/main-server/main-server/main_server.py -l /home/main-server/main-server/smtp_info.json
+
+[Install]
+WantedBy=multi-user.target

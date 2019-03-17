@@ -62,14 +62,14 @@
     owner: main-server
     group: main-server
 
-- name: load main server script
+- name: copy main server script
   copy:
     src: "{{ playbook_dir }}/../main-server/main_server.py"
     dest: "/home/main-server/main-server/main_server.py"
     owner: main-server
     group: main-server
 
-- name: load photo_burst module
+- name: copy photo_burst module
   copy:
     src: "{{ playbook_dir }}/../video-security/photo-burst/photo_burst.py"
     dest: "/home/main-server/main-server/photo_burst.py"
@@ -83,3 +83,10 @@
     owner: main-server
     group: main-server
     mode: 0600
+
+- name: copy main-server systemd service unit file
+  copy:
+    src: "main-server.service"
+    dest: "/etc/systemd/system/main-server.service"
+  notify:
+    - restart main-server

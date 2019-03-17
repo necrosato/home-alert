@@ -1,0 +1,7 @@
+---
+- name: restart main-server
+  service:
+    daemon_reload: yes
+    name: main-server.service
+    enabled: yes
+    state: restarted
