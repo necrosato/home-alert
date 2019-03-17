@@ -1,4 +1,12 @@
 ---
+- name: create the main server user
+  user:
+    name: main-server
+    groups:
+      - audio
+      - video
+    shell: /bin/bash
+
 - name: main server apt dependencies
   apt:
     name:
@@ -6,4 +14,72 @@
       - git
       - python3
       - python3-pip
+      - awscli
+      - ffmpeg
     update_cache: yes
+
+- name: update awscli using pip
+  pip:
+    name: awscli
+    state: latest
+    executable: /usr/bin/pip3
+
+- name: create aws directory
+  file:
+    path: /home/main-server/.aws
+    state: directory
+    owner: main-server
+    group: main-server
+
+- name: aws config
+  copy:
+    src: "{{ playbook_dir }}/secrets/aws/config"
+    dest: "/home/main-server/.aws/config"
+    owner: main-server
+    group: main-server
+    mode: 0400
+
+- name: aws credentials
+  copy:
+    src: "{{ playbook_dir }}/secrets/aws/credentials"
+    dest: "/home/main-server/.aws/credentials"
+    owner: main-server
+    group: main-server
+    mode: 0400
+
+- name: install main server python dependencies
+  pip:
+    name:
+      - flask
+      - pytz
+    state: latest
+    executable: /usr/bin/pip3
+
+- name: create main server directory
+  file:
+    path: /home/main-server/main-server
+    state: directory
+    owner: main-server
+    group: main-server
+
+- name: load main server script
+  copy:
+    src: "{{ playbook_dir }}/../main-server/main_server.py"
+    dest: "/home/main-server/main-server/main_server.py"
+    owner: main-server
+    group: main-server
+
+- name: load photo_burst module
+  copy:
+    src: "{{ playbook_dir }}/../video-security/photo-burst/photo_burst.py"
+    dest: "/home/main-server/main-server/photo_burst.py"
+    owner: main-server
+    group: main-server
+
+- name: copy smtp info
+  copy:
+    src: "{{ playbook_dir }}/secrets/smtp_info.json"
+    dest: "/home/main-server/main-server/smtp_info.json"
+    owner: main-server
+    group: main-server
+    mode: 0600

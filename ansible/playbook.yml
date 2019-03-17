@@ -7,4 +7,4 @@
 - hosts: rtsp-server
   become: true
   roles:
-    - rtsp-server
+    #- rtsp-server

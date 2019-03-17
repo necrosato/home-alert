@@ -9,6 +9,7 @@ import datetime
 import pytz
 
 import os,sys,inspect
+# Add other path if in repo
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir + '/video-security/photo-burst')
@@ -113,7 +114,7 @@ class HomeAlert():
 
                 # Save some photos 
                 # TODO: remove hardcoded directory and photo names
-                photo_dir = '/home/pi/photos/' + str(time)
+                photo_dir = '/home/main-server/photos/door_front/' + str(time)
                 os.mkdir(photo_dir)
                 photo_burst.photo_burst_ffmpeg('/dev/video0', photo_dir, 'photo_', '2', 10, 1280, 720)
                 photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
