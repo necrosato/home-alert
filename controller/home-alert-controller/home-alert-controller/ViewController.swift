@@ -87,6 +87,21 @@ class ViewController: UIViewController {
       present(alertController, animated: true, completion: nil)
     }
 
+    @IBAction func triggerButton(sender: UIButton) {
+      let statusUrl = ViewController.serverUrl + "controller?id=door_front&trigger=True"
+      let response = makeRequest(url: statusUrl)
+      var alertTitle = "Front door status:"
+      var alertMessage = response.responseString
+      if response.statusCode != 200 {
+        alertTitle = "Error: " + String(response.statusCode)
+        alertMessage = "Did not successfully make request to server."
+      }
+      let alertController = UIAlertController(title: alertTitle, message: alertMessage,
+        preferredStyle: UIAlertController.Style.alert)
+      alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+      present(alertController, animated: true, completion: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
