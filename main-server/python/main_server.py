@@ -1,5 +1,6 @@
-from flask import Flask, Response, request
 import argparse
+import os
+from flask import Flask, Response, request
 import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -7,17 +8,26 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import datetime
 import pytz
-import subprocess
+import cv2
+import threading
 
-import os,sys,inspect
 # Add other path if in repo
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir + '/video-security/photo-burst')
-import photo_burst
+#sys,inspect
+#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+#parentdir = os.path.dirname(currentdir)
+#sys.path.insert(0,parentdir + '/video-security/photo-burst')
+#import photo_burst
+from home_alert_camera import HomeAlertCamera
+import aws_utils
 
 # This is where home alerts get sent
 NOTIFY_EMAILS = ['sato@naookie.com']
+# The video device connected to the main server
+VIDEO_DEVICE = '/dev/video0'
+VIDEO_MAX_WIDTH = 1280
+VIDEO_MAX_HEIGHT = 720
+MAIN_SERVER_DIR = '/home/main-server/'
+
 
 class EndpointAction():
     '''
@@ -35,11 +45,13 @@ class HomeAlert():
     '''
     Class holding a flask app and smtp server
     '''
-    def __init__(self, smtp_info):
+    def __init__(self, smtp_info, camera):
         self.smtp_info = smtp_info
         self.smtp_connect()
         self.app = Flask('Home Alert Main Server')
         self.controllers = { 'door_front': { 'armed': True } }
+        self.camera = camera
+
 
     def smtp_connect(self):
         '''
@@ -116,10 +128,12 @@ class HomeAlert():
                 # Save some photos 
                 # TODO: remove hardcoded directory and photo names
                 photo_suffix = 'photos/door_front/' + str(time)
-                photo_dir = '/home/main-server/' + photo_suffix
+                photo_dir = MAIN_SERVER_DIR + photo_suffix
                 os.mkdir(photo_dir)
-                photo_burst.photo_burst_ffmpeg('/dev/video0', photo_dir, 'photo_', '2', 10, 1280, 720)
-                photos = [photo_dir + '/photo_01.jpg', photo_dir + '/photo_06.jpg']
+                self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
+                photos = [photo_dir + '/photo_00.jpeg',
+                          photo_dir + '/photo_01.jpeg',
+                          photo_dir + '/photo_02.jpeg']
 
                 # if the arm is true, alert
                 if self.controllers[controller_id]['armed']:
@@ -133,10 +147,9 @@ class HomeAlert():
                         self.smtp.send_message(msg)
 
                 # Move photos to s3
-                s3_cmd = ['aws', 's3', 'mv', photo_dir,
-                          's3://com.necrosato.home-alert/' + photo_suffix, '--recursive']
-                subprocess.check_call(s3_cmd)
-                os.rmdir(photo_dir)
+                dest = 's3://com.necrosato.home-alert/' + photo_suffix
+                s3_thread = threading.Thread(target=aws_utils.s3_mv_rmdir, args=[photo_dir, dest])
+                s3_thread.start()
 
         return response_str
 
@@ -159,11 +172,16 @@ class HomeAlert():
         return response_str
 
 
+    def stream(self):
+        return Response(self.camera.gen_video_stream(),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
     def run(self):
         '''
         Run the flask app
         '''
-        self.app.run(debug=True, host='0.0.0.0', port=5000)
+        self.app.run(debug=False, host='0.0.0.0', port=5000)
 
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
@@ -182,12 +200,16 @@ def main():
 
     smtp_info = json.load(open(args.login, 'r'))
 
-    home_alert = HomeAlert(smtp_info)
+    camera = HomeAlertCamera(VIDEO_DEVICE)
+    camera.set_res(VIDEO_MAX_WIDTH, VIDEO_MAX_HEIGHT)
+    home_alert = HomeAlert(smtp_info, camera)
     # Add endpoints
     home_alert.add_endpoint(endpoint='/',
             endpoint_name='index', handler=home_alert.index)
     home_alert.add_endpoint(endpoint='/controller',
             endpoint_name='controller', handler=home_alert.controller)
+    home_alert.add_endpoint(endpoint='/stream',
+            endpoint_name='stream', handler=home_alert.stream)
     # Start web server
     home_alert.run()
 

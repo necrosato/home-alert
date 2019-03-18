@@ -7,22 +7,32 @@
       - video
     shell: /bin/bash
 
-- name: main server apt dependencies
+- name: install main server apt dependencies
   apt:
     name:
       - vim
       - git
       - python3
-      - python3-pip
       - awscli
       - ffmpeg
+      # openCV devepencies
+      - libatlas3-base
+      - libjasper-dev
+      - libopencv-dev
+      - libgstreamer1.0-dev
+      - libqtgstreamer-dev
     update_cache: yes
+
+# Have to use get-pip.py as apt's version throws errors.
+# See https://stackoverflow.com/questions/37495375/python-pip-install-throws-typeerror-unsupported-operand-types-for-retry
+- name: install pip using get-pip.py
+  script: install_pip.sh
 
 - name: update awscli using pip
   pip:
     name: awscli
     state: latest
-    executable: /usr/bin/pip3
+    executable: /usr/local/bin/pip3
 
 - name: create aws directory
   file:
@@ -31,7 +41,7 @@
     owner: main-server
     group: main-server
 
-- name: aws config
+- name: copy aws config
   copy:
     src: "{{ playbook_dir }}/secrets/aws/config"
     dest: "/home/main-server/.aws/config"
@@ -39,7 +49,7 @@
     group: main-server
     mode: 0400
 
-- name: aws credentials
+- name: copy aws credentials
   copy:
     src: "{{ playbook_dir }}/secrets/aws/credentials"
     dest: "/home/main-server/.aws/credentials"
@@ -52,8 +62,17 @@
     name:
       - flask
       - pytz
+      # This one takes a long time > 10 mins
+      - opencv-python
     state: latest
-    executable: /usr/bin/pip3
+    executable: /usr/local/bin/pip3
+
+- name: create photos directory
+  file:
+    path: /home/main-server/photos/door_front
+    state: directory
+    owner: main-server
+    group: main-server
 
 - name: create main server directory
   file:
@@ -62,27 +81,31 @@
     owner: main-server
     group: main-server
 
-- name: copy main server script
+- name: copy main server python code
   copy:
-    src: "{{ playbook_dir }}/../main-server/main_server.py"
-    dest: "/home/main-server/main-server/main_server.py"
+    src: "{{ playbook_dir }}/../main-server/python/"
+    dest: "/home/main-server/main-server/python/"
     owner: main-server
     group: main-server
+  notify:
+    - restart main-server
 
-- name: copy photo_burst module
-  copy:
-    src: "{{ playbook_dir }}/../video-security/photo-burst/photo_burst.py"
-    dest: "/home/main-server/main-server/photo_burst.py"
+- name: create main server secrets directory
+  file:
+    path: /home/main-server/main-server/secrets
+    state: directory
     owner: main-server
     group: main-server
 
 - name: copy smtp info
   copy:
     src: "{{ playbook_dir }}/secrets/smtp_info.json"
-    dest: "/home/main-server/main-server/smtp_info.json"
+    dest: "/home/main-server/main-server/secrets/smtp_info.json"
     owner: main-server
     group: main-server
     mode: 0600
+  notify:
+    - restart main-server
 
 - name: copy main-server systemd service unit file
   copy:
