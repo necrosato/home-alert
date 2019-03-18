@@ -1,5 +1,6 @@
-from flask import Flask, Response, request
 import argparse
+import os
+from flask import Flask, Response, request
 import json
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -7,17 +8,17 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import datetime
 import pytz
-import subprocess
 import cv2
 import threading
 
-import os,sys,inspect
 # Add other path if in repo
+#sys,inspect
 #currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 #parentdir = os.path.dirname(currentdir)
 #sys.path.insert(0,parentdir + '/video-security/photo-burst')
 #import photo_burst
 from home_alert_camera import HomeAlertCamera
+import aws_utils
 
 # This is where home alerts get sent
 NOTIFY_EMAILS = ['sato@naookie.com']
@@ -146,10 +147,9 @@ class HomeAlert():
                         self.smtp.send_message(msg)
 
                 # Move photos to s3
-                s3_cmd = ['aws', 's3', 'mv', photo_dir,
-                          's3://com.necrosato.home-alert/' + photo_suffix, '--recursive']
-                subprocess.check_call(s3_cmd)
-                os.rmdir(photo_dir)
+                dest = 's3://com.necrosato.home-alert/' + photo_suffix
+                s3_thread = threading.Thread(target=aws_utils.s3_mv_rmdir, args=[photo_dir, dest])
+                s3_thread.start()
 
         return response_str
 

@@ -63,6 +63,13 @@
     state: latest
     executable: /usr/bin/pip3
 
+- name: create photos directory
+  file:
+    path: /home/photos/door_front
+    state: directory
+    owner: main-server
+    group: main-server
+
 - name: create main server directory
   file:
     path: /home/main-server/main-server
@@ -70,28 +77,26 @@
     owner: main-server
     group: main-server
 
-- name: copy main server module
+- name: copy main server python code
   copy:
-    src: "{{ playbook_dir }}/../main-server/main_server.py"
-    dest: "/home/main-server/main-server/main_server.py"
+    src: "{{ playbook_dir }}/../main-server/python/"
+    dest: "/home/main-server/main-server/python/"
     owner: main-server
     group: main-server
   notify:
     - restart main-server
 
-- name: copy camera module
-  copy:
-    src: "{{ playbook_dir }}/../main-server/home_alert_camera.py"
-    dest: "/home/main-server/main-server/home_alert_camera.py"
+- name: create main server secrets directory
+  file:
+    path: /home/main-server/main-server/secrets
+    state: directory
     owner: main-server
     group: main-server
-  notify:
-    - restart main-server
 
 - name: copy smtp info
   copy:
     src: "{{ playbook_dir }}/secrets/smtp_info.json"
-    dest: "/home/main-server/main-server/smtp_info.json"
+    dest: "/home/main-server/main-server/secrets/smtp_info.json"
     owner: main-server
     group: main-server
     mode: 0600
