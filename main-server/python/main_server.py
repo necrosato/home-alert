@@ -130,7 +130,7 @@ class HomeAlert():
                 photo_suffix = 'photos/door_front/' + str(time)
                 photo_dir = MAIN_SERVER_DIR + photo_suffix
                 os.mkdir(photo_dir)
-                self.camera.write_video_frames(photo_dir, 'photo_', 3, 1)
+                self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
                 photos = [photo_dir + '/photo_00.jpeg',
                           photo_dir + '/photo_01.jpeg',
                           photo_dir + '/photo_02.jpeg']

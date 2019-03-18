@@ -23,12 +23,18 @@ class HomeAlertCamera():
         self.frame_buffer_thread.start()
 
 
-    def set_res(self, x, y):
-        self.video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, x)
-        self.video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, y)
+    def set_res(self, width, height):
+        '''
+        Set capture resolution
+        '''
+        self.video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 
     def get_video_frame(self):
+        '''
+        Get a video frame from the buffer
+        '''
         self.frames_mutex.acquire()
         if len(self.frames) == 0:
             self.frames_mutex.release()
@@ -38,10 +44,12 @@ class HomeAlertCamera():
         return img
 
 
-    def gen_video_frames(self, num_frames, fps):
+    def gen_video_frames(self, num_frames, fps, delay):
         '''
         Generate a number of images from the video capture given frame rate and number of frames
+        delay is number of seconds (float) to sleep before getting first frame
         '''
+        time.sleep(delay)
         sleep_secs = 1 / fps
         for i in range(num_frames):
             frame = self.get_video_frame()
@@ -49,9 +57,12 @@ class HomeAlertCamera():
             yield frame
             
 
-    def write_video_frames(self, dest_dir, prefix, num_frames, fps, ext='.jpeg'):
+    def write_video_frames(self, dest_dir, prefix, num_frames, fps, delay, ext='.jpeg'):
+        '''
+        Calls gen_video_frames and writes frames to files.
+        '''
         frame_num = 0
-        for frame in self.gen_video_frames(num_frames, fps):
+        for frame in self.gen_video_frames(num_frames, fps, delay):
             out_fname = dest_dir + '/' + prefix + '{:02d}'.format(frame_num) + ext
             cv2.imwrite(out_fname, frame)
             frame_num += 1

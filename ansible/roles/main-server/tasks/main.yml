@@ -13,7 +13,6 @@
       - vim
       - git
       - python3
-      - python3-pip
       - awscli
       - ffmpeg
       # openCV devepencies
@@ -24,11 +23,16 @@
       - libqtgstreamer-dev
     update_cache: yes
 
+# Have to use get-pip.py as apt's version throws errors.
+# See https://stackoverflow.com/questions/37495375/python-pip-install-throws-typeerror-unsupported-operand-types-for-retry
+- name: install pip using get-pip.py
+  script: install_pip.sh
+
 - name: update awscli using pip
   pip:
     name: awscli
     state: latest
-    executable: /usr/bin/pip3
+    executable: /usr/local/bin/pip3
 
 - name: create aws directory
   file:
@@ -61,7 +65,7 @@
       # This one takes a long time > 10 mins
       - opencv-python
     state: latest
-    executable: /usr/bin/pip3
+    executable: /usr/local/bin/pip3
 
 - name: create photos directory
   file:
