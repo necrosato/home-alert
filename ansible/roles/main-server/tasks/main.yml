@@ -65,7 +65,7 @@
 
 - name: create photos directory
   file:
-    path: /home/photos/door_front
+    path: /home/main-server/photos/door_front
     state: directory
     owner: main-server
     group: main-server
