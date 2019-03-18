@@ -1,12 +1,12 @@
 import cv2
 import time
+import threading
 
 def get_video_capture(device_path):
     '''
     Get a video capture device, throw if could not open.
     '''
     video_capture = cv2.VideoCapture(device_path)
-    video_capture.read()
     return video_capture
 
 class HomeAlertCamera():
@@ -16,7 +16,11 @@ class HomeAlertCamera():
     '''
     def __init__(self, device_path):
         self.video_capture = get_video_capture(device_path)
-        self.video_capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        self.video_capture.set(cv2.CAP_PROP_BUFFERSIZE, 10)
+        self.frames = []
+        self.frames_mutex = threading.Lock()
+        self.frame_buffer_thread = threading.Thread(target=self.buffer_video_capture)
+        self.frame_buffer_thread.start()
 
 
     def set_res(self, x, y):
@@ -25,7 +29,12 @@ class HomeAlertCamera():
 
 
     def get_video_frame(self):
-        ret, img = self.video_capture.read()
+        self.frames_mutex.acquire()
+        if len(self.frames) == 0:
+            self.frames_mutex.release()
+            raise Exception('Attempted to read from empty buffer')
+        img = self.frames[0]
+        self.frames_mutex.release()
         return img
 
 
@@ -33,7 +42,6 @@ class HomeAlertCamera():
         '''
         Generate a number of images from the video capture given frame rate and number of frames
         '''
-        self.video_capture.grab()
         sleep_secs = 1 / fps
         for i in range(num_frames):
             frame = self.get_video_frame()
@@ -54,9 +62,23 @@ class HomeAlertCamera():
         '''
         Generate a stream of frames for an html response
         '''
-        self.video_capture.grab()
         while True:
             img = self.get_video_frame()
             img_str = cv2.imencode('.jpg', img)[1].tostring()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + img_str + b'\r\n\r\n')
+
+
+    def buffer_video_capture(self):
+        while True:
+            ret, img = self.video_capture.read()
+            if ret:
+                self.frames_mutex.acquire()
+                if len(self.frames) > 0:
+                    self.frames.pop()
+                self.frames.append(img)
+                if len(self.frames) != 1:
+                    self.frames_mutex.release()
+                    raise Exception('Frame buffer must have one frame in it at all times.')
+                self.frames_mutex.release()
+
