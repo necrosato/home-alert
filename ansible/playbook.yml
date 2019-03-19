@@ -3,8 +3,3 @@
   become: true
   roles:
     - main-server
-
-- hosts: rtsp-server
-  become: true
-  roles:
-    #- rtsp-server
