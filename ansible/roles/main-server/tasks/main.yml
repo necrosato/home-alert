@@ -14,11 +14,10 @@
       - git
       - python3
       - awscli
-      - ffmpeg
       # openCV devepencies
+      - libopencv-dev
       - libatlas3-base
       - libjasper-dev
-      - libopencv-dev
       - libgstreamer1.0-dev
       - libqtgstreamer-dev
     update_cache: yes
