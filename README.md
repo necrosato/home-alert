@@ -8,4 +8,4 @@ better description and user installation guide
 
 ### Design Diagram
 
-[!](https://docs.google.com/drawings/d/e/2PACX-1vSEVFTtqQK6O_ZhOK2cQsX6Z9cOhI2-P0edLwlsttmLBTdILeRkZJulocc0ExMeHQ3qqyrDxjxTxg7x/pub?w=1440&h=1080)
+![](https://docs.google.com/drawings/d/e/2PACX-1vSEVFTtqQK6O_ZhOK2cQsX6Z9cOhI2-P0edLwlsttmLBTdILeRkZJulocc0ExMeHQ3qqyrDxjxTxg7x/pub?w=1440&h=1080)
