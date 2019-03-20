@@ -154,10 +154,11 @@ class HomeAlertMainServer():
 
     def status():
         '''
-        Returns controller location, arm status, last triggered
+        Returns controller location and arm status
         '''
-        # TODO: Fill out
-        return "TODO: Make this useful!"
+        response_str = 'Location: ' + self.location + '<br>'
+        response_str += 'Armed: ' + str(self.armed)
+        return response_str
 
 
     def stream(self):
