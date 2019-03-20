@@ -3,7 +3,7 @@
 // Naookie Sato
 //
 // Created by Naookie Sato on 03/02/2019
-// Copyright © 2018 Naookie Sato. All rights reserved.
+// Copyright © 2019 Naookie Sato. All rights reserved.
 //
 
 #include <ESP8266WiFi.h>

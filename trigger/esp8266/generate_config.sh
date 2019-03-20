@@ -15,19 +15,19 @@ while getopts "hw:a:s:p:i:" arg; do
       echo "-i : Input pin to use on microcontroller."
       ;;
     w )
-      SSID=$OPTARG
+      SSID=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
     a )
-      PASSWORD=$OPTARG
+      PASSWORD=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
     s )
-      SERVER_ADDRESS=$OPTARG
+      SERVER_ADDRESS=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
     p )
-      SERVER_PORT=$OPTARG
+      SERVER_PORT=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
     i )
-      INPUT_PIN=$OPTARG
+      INPUT_PIN=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
   esac
 done
