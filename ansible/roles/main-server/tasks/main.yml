@@ -66,16 +66,16 @@
     state: latest
     executable: /usr/local/bin/pip3
 
-- name: create photos directory
+- name: create main server directory
   file:
-    path: /home/main-server/photos/door_front
+    path: /home/main-server/main-server
     state: directory
     owner: main-server
     group: main-server
 
-- name: create main server directory
+- name: create photos directory
   file:
-    path: /home/main-server/main-server
+    path: "/home/main-server/main-server/{{ location }}/photos"
     state: directory
     owner: main-server
     group: main-server
