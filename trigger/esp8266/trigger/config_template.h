@@ -9,25 +9,22 @@
 #ifndef _HOME_ALERT_TRIGGER_ESP8266_TRIGGER_CONFIG_TEMPLATE_H_
 #define _HOME_ALERT_TRIGGER_ESP8266_TRIGGER_CONFIG_TEMPLATE_H_
 
-/**
- * This file is a template.
- * The all caps strings will be replaced with real values
- */
+// Values populated using generate_config.sh
 
 // Wifi Info
 const char* ssid      = "SSID";
 const char* password  = "PASSWORD";
 
 // Main Server Info
-String server_ip      = "SERVER_IP";
+String server_address = "SERVER_ADDRESS";
 String server_port    = "SERVER_PORT";
-String endpoint       = "ENDPOINT";
-String request_string = "http://" + server_ip + ":" + server_port + endpoint;
+String endpoint       = "/trigger";
+String request_string = "http://" + server_address + ":" + server_port + endpoint;
 const char* request   = request_string.c_str();
 
 // Pull up resistor on switch pin
 // LOW for a closed switch, HIGH for open.
-int switch_pin = D6;
+int switch_pin = PIN;
 int switch_status;
 // Status led, LOW when switch closed, high when open
 // TODO: I should probably wire an external led into my circuit which lights up
