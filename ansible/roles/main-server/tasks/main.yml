@@ -27,9 +27,15 @@
 - name: install pip using get-pip.py
   script: install_pip.sh
 
-- name: update awscli using pip
+- name: install main server python dependencies
   pip:
-    name: awscli
+    name:
+      - awscli
+      - pyyaml
+      - flask
+      - pytz
+      # This one takes a long time > 10 mins
+      - opencv-python
     state: latest
     executable: /usr/local/bin/pip3
 
@@ -55,16 +61,6 @@
     owner: main-server
     group: main-server
     mode: 0400
-
-- name: install main server python dependencies
-  pip:
-    name:
-      - flask
-      - pytz
-      # This one takes a long time > 10 mins
-      - opencv-python
-    state: latest
-    executable: /usr/local/bin/pip3
 
 - name: create main server directory
   file:
