@@ -1,5 +1,5 @@
 //
-// front_door_sensor.ino
+// trigger.ino
 // Naookie Sato
 //
 // Created by Naookie Sato on 03/02/2019
@@ -11,31 +11,9 @@
 #include <stdlib.h>
 // This might need to be included when using some esp8266 arduino cores.
 //#include "pins_arduino.h"
-
-// Wifi Info
-const char* ssid      = "";
-const char* password  = "";
-
-// Main Server Info
-String server_ip      = "10.0.0.138";
-String server_port    = "5000";
-String endpoint       = "/controller?id=door_front&trigger=True";
-String request_string = "http://" + server_ip + ":" + server_port + endpoint;
-const char* request   = request_string.c_str();
+#include "config.h"
 
 int wifi_status;
-
-// Pull up resistor on switch pin
-// LOW for a closed switch, HIGH for open.
-int switch_pin = D6;
-int switch_status;
-// Status led, LOW when switch closed, high when open
-// TODO: I should probably wire an external led into my circuit which lights up
-// when the switch closes. In reality that is what it is used for, but the blocking nature of
-// http requests tend to hold the led in a state even when the switch is in fact in another state.
-// But the onboard led is easy and clean, no extra wires. In reality the delay is much shorter than the
-// time to open a door, so it will stay for now.
-int led_pin = BUILTIN_LED;
 
 void setup() {
   delay(1000);
@@ -66,8 +44,8 @@ void setup() {
   digitalWrite(led_pin, !switch_status);
 }
 
-void OnDoorOpen() {
-  Serial.println("Door opened");
+void OnSwitchOpen() {
+  Serial.println("Switch opened");
   Serial.print("Sending request to main server: ");
   Serial.println(request);
   HTTPClient http;
@@ -79,12 +57,12 @@ void OnDoorOpen() {
   }
 }
 
-void OnDoorClose() {
-  Serial.println("Door closed");
+void OnSwitchClose() {
+  Serial.println("Switch closed");
 }
 
 // This detects change in switch state
-void CheckDoorOpen() {
+void CheckSwitchOpen() {
   int switch_status_last = switch_status;
   switch_status = digitalRead(switch_pin);
   if (switch_status != switch_status_last) {
@@ -93,9 +71,9 @@ void CheckDoorOpen() {
     // See https://github.com/nodemcu/nodemcu-devkit-v1.0/issues/16
     digitalWrite(led_pin, !switch_status);
     if (switch_status == HIGH) {
-      OnDoorOpen();
+      OnSwitchOpen();
     } else {
-      OnDoorClose();
+      OnSwitchClose();
     }
   }
 }
@@ -116,7 +94,7 @@ void loop() {
     }
   }
   if(wifi_status == WL_CONNECTED){
-    CheckDoorOpen();
+    CheckSwitchOpen();
   }
   delay(100); // check for connection every once a second
 }

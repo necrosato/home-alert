@@ -14,9 +14,10 @@ class HomeAlertCamera():
     A class to access a video camera using opencv
     Takes device path to video camera
     '''
-    def __init__(self, device_path):
+    def __init__(self, device_path, width, height):
         self.video_capture = get_video_capture(device_path)
         self.video_capture.set(cv2.CAP_PROP_BUFFERSIZE, 10)
+        self.set_res(width, height)
         self.frames = []
         self.frames_mutex = threading.Lock()
         self.frame_buffer_thread = threading.Thread(target=self.buffer_video_capture)

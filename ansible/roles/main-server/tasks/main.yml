@@ -27,9 +27,15 @@
 - name: install pip using get-pip.py
   script: install_pip.sh
 
-- name: update awscli using pip
+- name: install main server python dependencies
   pip:
-    name: awscli
+    name:
+      - awscli
+      - pyyaml
+      - flask
+      - pytz
+      # This one takes a long time > 10 mins
+      - opencv-python
     state: latest
     executable: /usr/local/bin/pip3
 
@@ -56,26 +62,16 @@
     group: main-server
     mode: 0400
 
-- name: install main server python dependencies
-  pip:
-    name:
-      - flask
-      - pytz
-      # This one takes a long time > 10 mins
-      - opencv-python
-    state: latest
-    executable: /usr/local/bin/pip3
-
-- name: create photos directory
+- name: create main server directory
   file:
-    path: /home/main-server/photos/door_front
+    path: /home/main-server/main-server
     state: directory
     owner: main-server
     group: main-server
 
-- name: create main server directory
+- name: create photos directory
   file:
-    path: /home/main-server/main-server
+    path: "/home/main-server/main-server/{{ location }}/photos"
     state: directory
     owner: main-server
     group: main-server
@@ -98,8 +94,8 @@
 
 - name: copy smtp info
   copy:
-    src: "{{ playbook_dir }}/secrets/smtp_info.json"
-    dest: "/home/main-server/main-server/secrets/smtp_info.json"
+    src: "{{ playbook_dir }}/secrets/smtp_info.yml"
+    dest: "/home/main-server/main-server/secrets/smtp_info.yml"
     owner: main-server
     group: main-server
     mode: 0600

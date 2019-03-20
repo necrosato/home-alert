@@ -1,5 +1,7 @@
 ---
 - hosts: main-server
   become: true
+  vars:
+    - location: "front_door"
   roles:
     - main-server
