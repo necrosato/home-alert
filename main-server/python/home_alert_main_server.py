@@ -1,6 +1,5 @@
 import os
 from flask import Flask, Response, request
-import yaml
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -13,7 +12,7 @@ from home_alert_camera import HomeAlertCamera
 import aws_utils
 
 # TODO: Pull this out and pass to main server
-MAIN_SERVER_DIR = '/home/main-server/'
+MAIN_SERVER_DIR = '/home/main-server/main-server/'
 
 class EndpointAction():
     '''
@@ -48,17 +47,17 @@ class HomeAlertMainServer():
         self.app = Flask('Home Alert Main Server - ' + self.location)
 
         # Add endpoints
-        home_alert.add_endpoint(endpoint='/',
+        self.add_endpoint(endpoint='/',
                 endpoint_name='index', handler=self.index)
-        home_alert.add_endpoint(endpoint='/status',
+        self.add_endpoint(endpoint='/status',
                 endpoint_name='status', handler=self.status)
-        home_alert.add_endpoint(endpoint='/trigger',
+        self.add_endpoint(endpoint='/trigger',
                 endpoint_name='trigger', handler=self.trigger)
-        home_alert.add_endpoint(endpoint='/arm',
+        self.add_endpoint(endpoint='/arm',
                 endpoint_name='arm', handler=self.arm)
-        home_alert.add_endpoint(endpoint='/disarm',
+        self.add_endpoint(endpoint='/disarm',
                 endpoint_name='disarm', handler=self.disarm)
-        home_alert.add_endpoint(endpoint='/stream',
+        self.add_endpoint(endpoint='/stream',
                 endpoint_name='stream', handler=self.stream)
 
 
@@ -152,7 +151,7 @@ class HomeAlertMainServer():
         return response_str
 
 
-    def status():
+    def status(self):
         '''
         Returns controller location and arm status
         '''
