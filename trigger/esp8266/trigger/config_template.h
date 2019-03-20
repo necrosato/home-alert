@@ -1,9 +1,9 @@
 //
 // config_template.h
-// Revl
+// Naookie Sato
 //
 // Created by Naookie Sato on 03/20/2019
-// Copyright © 2018 Revl. All rights reserved.
+// Copyright © 2019 Naookie Sato. All rights reserved.
 //
 
 #ifndef _HOME_ALERT_TRIGGER_ESP8266_TRIGGER_CONFIG_TEMPLATE_H_
