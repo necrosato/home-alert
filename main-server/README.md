@@ -9,13 +9,12 @@ It could possibly send requests back to other devices on the network in the futu
 
 ## SMTP Info
 
-The server needs a json file with smtp info to send emails.
+The server needs a yaml file with smtp info to send emails.
 The following example file designates the format:
 ```
-{
-  "smtp_host": "smtp.gmail.com",
-  "smtp_port": 587,
-  "user_address": "example@gmail.com",
-  "user_pass": "super-secure-password"
-}
+---
+smtp_host: "smtp.gmail.com"
+smtp_port: 587
+user_address: "example@gmail.com"
+user_pass: "super-secure-password"
 ```

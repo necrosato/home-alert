@@ -94,8 +94,8 @@
 
 - name: copy smtp info
   copy:
-    src: "{{ playbook_dir }}/secrets/smtp_info.json"
-    dest: "/home/main-server/main-server/secrets/smtp_info.json"
+    src: "{{ playbook_dir }}/secrets/smtp_info.yml"
+    dest: "/home/main-server/main-server/secrets/smtp_info.yml"
     owner: main-server
     group: main-server
     mode: 0600
