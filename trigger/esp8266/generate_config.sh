@@ -15,3 +15,4 @@ CONFIG_TEMPLATE=$DIR/trigger/config_template.h
 CONFIG=$DIR/trigger/config.h
 cp $CONFIG_TEMPLATE $CONFIG
 perl -pi -e 's/_template//ig' $CONFIG
+# TODO: Fill out rest of config
