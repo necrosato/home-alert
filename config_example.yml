@@ -1,0 +1,37 @@
+---
+# This is the main configuration file for the entire Home Alert system.
+# Users should not have to manually edit any other files in this repo but this one.
+
+# WiFi Credentials
+wifi:
+  ssid: "ssid"
+  password: "password"
+
+# Control Server
+control_server:
+  address: "10.0.0.138"
+  user: "pi"
+
+# List of emails to send notifications when a location is triggered.
+notify_emails:
+  - "sato@naookie.com"
+
+# Main Server Definitions
+main_servers:
+  # Each element in this list defines a main server. Add elements to define multiple main servers.
+  - location: "front_door"
+    address: "10.0.0.138"
+    server_port: 5000
+    user: "pi"
+    # S3 bucket
+    upload_path: "s3://com.mybucket/"
+    video_device: "/dev/video0"
+    video_width: 1280
+    video_height: 720
+
+# Email to send notifications
+smtp_info:
+  host: "smtp.gmail.com"
+  port: 587
+  user_address: "example@gmail.com"
+  user_pass: "password"
