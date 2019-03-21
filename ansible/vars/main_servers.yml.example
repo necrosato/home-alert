@@ -1,5 +1,0 @@
----
-- main_servers:
-  - location: "front_door"
-    address: "10.0.0.138"
-    port: "5000"

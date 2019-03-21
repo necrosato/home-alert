@@ -85,17 +85,10 @@
   notify:
     - restart main-server
 
-- name: create main server secrets directory
-  file:
-    path: /home/main-server/main-server/secrets
-    state: directory
-    owner: main-server
-    group: main-server
-
-- name: copy smtp info
+- name: copy location main server config to main server directory
   copy:
-    src: "{{ playbook_dir }}/secrets/smtp_info.yml"
-    dest: "/home/main-server/main-server/secrets/smtp_info.yml"
+    src: "{{ playbook_dir }}/vars/{{ location }}.yml"
+    dest: "/home/main-server/main-server/config.yml"
     owner: main-server
     group: main-server
     mode: 0600
