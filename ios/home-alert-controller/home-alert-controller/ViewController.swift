@@ -7,11 +7,12 @@
 //
 
 import UIKit
-//import PlaygroundSupport
 
 class ViewController: UIViewController {
 
-    static var serverUrl = "http://10.0.0.138:5000/"
+    static var serverUrl = "http://10.0.0.138/"
+    // TODO: Remove this and make location a selection, querying the main server
+    static var location = "front_door"
 
     /**
      * This returns a tuple, response code and the page response data.
@@ -43,7 +44,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func lockButton(sender: UIButton) {
-      let lockUrl = ViewController.serverUrl + "controller?id=door_front&arm=True"
+      let lockUrl = ViewController.serverUrl + ViewController.location + "/arm"
       let response = makeRequest(url: lockUrl)
       var alertTitle = "Email notifications on"
       var alertMessage = response.responseString
@@ -58,7 +59,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func unlockButton(sender: UIButton) {
-      let unlockUrl = ViewController.serverUrl + "controller?id=door_front&arm=False"
+      let unlockUrl = ViewController.serverUrl + ViewController.location + "/disarm"
       let response = makeRequest(url: unlockUrl)
       var alertTitle = "Email notifications off"
       var alertMessage = response.responseString
@@ -73,7 +74,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func statusButton(sender: UIButton) {
-      let statusUrl = ViewController.serverUrl + "controller?id=door_front"
+      let statusUrl = ViewController.serverUrl + ViewController.location
       let response = makeRequest(url: statusUrl)
       var alertTitle = "Front door status:"
       var alertMessage = response.responseString
@@ -88,9 +89,9 @@ class ViewController: UIViewController {
     }
 
     @IBAction func triggerButton(sender: UIButton) {
-      let statusUrl = ViewController.serverUrl + "controller?id=door_front&trigger=True"
-      let response = makeRequest(url: statusUrl)
-      var alertTitle = "Front door status:"
+      let triggerUrl = ViewController.serverUrl + ViewController.location + "/trigger"
+      let response = makeRequest(url: triggerUrl)
+      var alertTitle = "Front door manual trigger:"
       var alertMessage = response.responseString
       if response.statusCode != 200 {
         alertTitle = "Error: " + String(response.statusCode)
@@ -106,7 +107,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
 
 }
 
