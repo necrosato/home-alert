@@ -19,14 +19,14 @@ server {
 
 	# This routes to a main server
 	location = /{{ main_server.location }} {
-		proxy_pass http://{{ main_server.address }}:{{ main_server.port }}/;
+		proxy_pass http://{{ main_server.address }}:{{ main_server.server_port }}/;
 	}
 	location ~ /{{ main_server.location }}/(.*) {
 		proxy_set_header X-Forwarded-Host $host:$server_port;
 		proxy_set_header X-Forwarded-Server $host;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		resolver 127.0.0.1 [::1];
-		set $target http://{{ main_server.address }}:{{ main_server.port }}/$1;
+		set $target http://{{ main_server.address }}:{{ main_server.server_port }}/$1;
 		proxy_pass $target;
 	}
 {% endfor %}

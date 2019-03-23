@@ -65,7 +65,7 @@ class HomeAlertMainServer():
         '''
         Opens/refreshes an smtp connection
         '''
-        self.smtp = smtplib.SMTP(host=self.smtp_info['smtp_host'], port=self.smtp_info['smtp_port'])
+        self.smtp = smtplib.SMTP(host=self.smtp_info['host'], port=self.smtp_info['port'])
         self.smtp.starttls()
         self.smtp.login(self.smtp_info['user_address'], self.smtp_info['user_pass'])
 
