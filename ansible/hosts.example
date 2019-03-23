@@ -1,0 +1,5 @@
+[control-server]
+10.0.0.138 ansible_user=pi
+
+[main-servers]
+10.0.0.138 ansible_user=pi

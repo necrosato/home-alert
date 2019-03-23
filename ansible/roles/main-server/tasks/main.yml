@@ -71,7 +71,7 @@
 
 - name: create photos directory
   file:
-    path: "/home/main-server/main-server/{{ location }}/photos"
+    path: "/home/main-server/main-server/photos"
     state: directory
     owner: main-server
     group: main-server

@@ -122,7 +122,7 @@ class HomeAlertMainServer():
         response_str = self.location + ' recieved trigger: ' + str(time)
 
         # Save some photos 
-        photo_suffix = self.location + '/photos/' + str(time)
+        photo_suffix = '/photos/' + str(time)
         photo_dir = MAIN_SERVER_DIR + photo_suffix
         os.mkdir(photo_dir)
         self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
@@ -143,7 +143,7 @@ class HomeAlertMainServer():
                 self.smtp.send_message(msg)
 
         # Move photos to s3
-        dest = self.s3_bucket + photo_suffix
+        dest = self.s3_bucket + self.location + photo_suffix
         s3_thread = threading.Thread(target=aws_utils.s3_mv_rmdir,
                                      args=[photo_dir, dest])
         s3_thread.start()

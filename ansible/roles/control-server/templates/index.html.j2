@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Home Alert Control Server</title>
+  </head>
+  <body>
+    <h1>Home Alert Control Server<br></h1>
+    <p>Installed Main Servers:<br></p>
+  {% for main_server in main_servers %}
+    <a href="/{{ main_server.location }}">{{ main_server.location }}</a><br>
+  {% endfor %}
+  </body>
+</html>

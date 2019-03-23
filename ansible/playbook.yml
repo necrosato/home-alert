@@ -1,7 +1,12 @@
 ---
-- hosts: main-server
+- hosts: control-server
   become: true
-  vars:
-    - location: "front_door"
+  vars_files:
+    - "{{ playbook_dir }}/vars/main_servers.yml"
+  roles:
+    - control-server
+
+- hosts: main-servers
+  become: true
   roles:
     - main-server

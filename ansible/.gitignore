@@ -1,1 +1,3 @@
 playbook.retry
+vars/main_servers.yml
+hosts
