@@ -6,7 +6,9 @@ An open source security system powered by a low cost distributed iot system.
 
 better description and user installation guide
 
-
+### Hardware
+Has been tested with Logitech USB webcams. Refer to this list and opt for a camera that works fine without a powered usb hub.
+https://elinux.org/RPi_USB_Webcams
 ### Locations
 
 A [main server](./main-server/README.md) and [trigger](./trigger/README.md) pair make up a location. These are logical identifiers for different pieces of the home alert network.
