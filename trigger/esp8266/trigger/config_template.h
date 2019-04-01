@@ -15,11 +15,14 @@
 const char* ssid      = "SSID";
 const char* password  = "PASSWORD";
 
-// Main Server Info
+// Control Server Info
+//TODO: Authenticate to the control server once it requires it
+String cs_user        = "CS_USER";
+String cs_pass        = "CS_PASS";
 String server_address = "SERVER_ADDRESS";
-String server_port    = "SERVER_PORT";
+String location       = "LOCATION";
 String endpoint       = "/trigger";
-String request_string = "http://" + server_address + ":" + server_port + endpoint;
+String request_string = "http://" + server_address + "/" + location + endpoint;
 const char* request   = request_string.c_str();
 
 // Pull up resistor on switch pin
