@@ -28,6 +28,12 @@ main_servers:
     video_device: "/dev/video0"
     video_width: 1280
     video_height: 720
+    # May be one of
+    # apt: install opencv python3 bindings using apt, not available on all distributions.
+    # source: Download and compile opencv and python3 bindings, can take **hours**.
+    # If using source on a raspberry pi, you must have a swap partition set up.
+    # Otherwise you will risk running out of ram during compilation.
+    opencv_install: "source"
 
 # Email to send notifications
 smtp_info:
