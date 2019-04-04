@@ -16,7 +16,7 @@ done
 # if bindings already available, no need to build
 python3 -c "import cv2"
 if [[ "$?" == "0" ]]; then
-  return 0
+  exit 0
 fi
 
 # For compilation
