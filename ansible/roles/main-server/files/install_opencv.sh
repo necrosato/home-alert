@@ -13,6 +13,12 @@ while getopts "ht:" opt; do
   esac
 done
 
+# if bindings already available, no need to build
+python3 -c "import cv2"
+if [[ "$?" == "0" ]]; then
+  return 0
+fi
+
 # For compilation
 sudo apt-get install build-essential
 # Required

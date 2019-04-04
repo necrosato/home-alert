@@ -63,7 +63,7 @@
 
 # Better gave game of thrones queued up, cuz this could take hours.
 - name: opencv via source
-  script: opencv_install.sh
+  script: install_opencv.sh
   when: opencv_install == "source"
 
 # END OPENCV
