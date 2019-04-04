@@ -32,14 +32,7 @@ def main():
         main_server_config = {}
         main_server_config['notify_emails'] = config['notify_emails']
         main_server_config['smtp_info'] = config['smtp_info']
-        main_server_config['location'] = main_server['location']
-        main_server_config['address'] = main_server['address']
-        main_server_config['server_port'] = main_server['server_port']
-        main_server_config['upload_path'] = main_server['upload_path']
-        main_server_config['video_device'] = main_server['video_device']
-        main_server_config['video_width'] = main_server['video_width']
-        main_server_config['video_height'] = main_server['video_height']
-        main_server_config['opencv_install'] = main_server['opencv_install']
+        main_server_config['main_server'] = main_server
         yaml.dump(main_server_config, open(main_server_config_path, 'w'), default_flow_style=False)
 
         # Add main server play to playbook

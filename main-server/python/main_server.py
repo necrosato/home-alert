@@ -12,12 +12,13 @@ def main():
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config, 'r'))
-    location = config['location']
-    port = config['server_port']
-    video_device = config['video_device']
-    video_width = config['video_width']
-    video_height = config['video_height']
-    s3_bucket = config['upload_path']
+    # TODO: Don't bother pulling these out, pass dict to MomeAlertMainServer
+    location = config['main_server']['location']
+    port = config['main_server']['server_port']
+    video_device = config['main_server']['video_device']
+    video_width = config['main_server']['video_width']
+    video_height = config['main_server']['video_height']
+    s3_bucket = config['main_server']['upload_path']
     notify_emails = config['notify_emails']
 
     camera = HomeAlertCamera(video_device, video_width, video_height)
