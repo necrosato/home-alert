@@ -31,9 +31,12 @@ main_servers:
     # May be one of
     # apt: install opencv python3 bindings using apt, not available on all distributions.
     # source: Download and compile opencv and python3 bindings, can take **hours**.
+    # stretch: Use a combination of apt and pip to get working python3 bindings on raspian stretch
+    # skip: you have installed opencv on your own, do not attempt any installation method.
+    #
     # If using source on a raspberry pi, you must have a swap partition set up.
     # Otherwise you will risk running out of ram during compilation.
-    opencv_install: "source"
+    opencv_install: "skip"
 
 # Email to send notifications
 smtp_info:

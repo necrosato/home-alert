@@ -14,12 +14,6 @@
       - git
       - python3
       - awscli
-      # openCV devepencies
-      - libopencv-dev
-      - libatlas3-base
-      - libjasper-dev
-      - libgstreamer1.0-dev
-      - libqtgstreamer-dev
     update_cache: yes
 
 # Have to use get-pip.py as apt's version throws errors.
@@ -34,10 +28,45 @@
       - pyyaml
       - flask
       - pytz
+    state: latest
+    executable: /usr/local/bin/pip3
+
+# OPENCV
+
+- name: opencv for stretch apt
+  apt:
+    name:
+      # openCV devepencies
+      - libopencv-dev
+      - libatlas3-base
+      - libjasper-dev
+      - libgstreamer1.0-dev
+      - libqtgstreamer-dev
+    update_cache: yes
+  when: opencv_install == "stretch"
+
+- name: opencv for stretch pip
+  pip:
+    name:
       # This one takes a long time > 10 mins
       - opencv-python
     state: latest
     executable: /usr/local/bin/pip3
+  when: opencv_install == "stretch"
+
+- name: opencv via apt
+  apt:
+    name:
+      - python3-opencv
+    update_cache: yes
+  when: opencv_install == "apt"
+
+# Better gave game of thrones queued up, cuz this could take hours.
+- name: opencv via source
+  script: opencv_install.sh
+  when: opencv_install == "source"
+
+# END OPENCV
 
 - name: create aws directory
   file:
