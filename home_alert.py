@@ -1,6 +1,23 @@
 import argparse
 import yaml
 import os
+import subprocess
+
+def create_control_server(config_path):
+    control_server = {}
+    control_server['hosts'] = 'control_server'
+    control_server['become'] = True
+    control_server['vars_files'] = [ config_path ]
+    control_server['roles'] = [ 'control-server' ]
+
+
+def create_htpasswd(dest, users):
+    with open(dest, 'w') as f:
+        for creds in users:
+            f.write(creds['username'] + ':')
+            cmd = ['openssl', 'passwd', '-apr1', creds['password']]
+            f.write(subprocess.check_output(cmd).decode('utf-8'))
+
 
 def main():
     parser = argparse.ArgumentParser(description='Home Alert installation script.')
@@ -15,16 +32,15 @@ def main():
     ansible_playbook = []
 
     # Add control server to playbook
-    control_server = {}
-    control_server['hosts'] = 'control_server'
-    control_server['become'] = True
-    control_server['vars_files'] = [ os.path.realpath(args.config) ]
-    control_server['roles'] = [ 'control-server' ]
-    ansible_playbook.append(control_server)
+    ansible_playbook.append(create_control_server(os.path.realpath(args.config)))
 
+    # Add control server to inventory
     inventory = '[control_server]\n{} ansible_user={}\n'.format(
             config['control_server']['address'], config['control_server']['user'])
 
+    # Generate .htpasswd file for control server
+    htpasswd_path = os.path.join(repo_path, 'ansible/roles/control-server/files/htpasswd')
+    create_htpasswd(htpasswd_path, config['control_server']['web_credentials'])
 
     for main_server in config['main_servers']:
         # Build main server config file

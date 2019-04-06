@@ -11,6 +11,10 @@ wifi:
 control_server:
   address: "10.0.0.138"
   user: "pi"
+  web_credentials:
+    # Can have multiple logins to the control server
+    - username: "admin"
+      password: "admin"
 
 # List of emails to send notifications when a location is triggered.
 notify_emails:
