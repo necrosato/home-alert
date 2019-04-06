@@ -2,7 +2,7 @@
 
 set -e
 
-while getopts "hw:a:s:p:i:" arg; do
+while getopts "hw:a:c:l:i:" arg; do
   case $arg in
     h )
       echo "Use this script to generate a config.h file"
@@ -10,8 +10,8 @@ while getopts "hw:a:s:p:i:" arg; do
       echo "-h : Desplay this help message."
       echo "-w : Local wifi network ssid."
       echo "-a : Local wifi network authentication password."
-      echo "-s : Main server address."
-      echo "-p : Main server port."
+      echo "-c : Control server address."
+      echo "-l : Main server location."
       echo "-i : Input pin to use on microcontroller."
       ;;
     w )
@@ -20,11 +20,11 @@ while getopts "hw:a:s:p:i:" arg; do
     a )
       PASSWORD=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
-    s )
+    c )
       SERVER_ADDRESS=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
-    p )
-      SERVER_PORT=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
+    l )
+      LOCATION=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
       ;;
     i )
       INPUT_PIN=$(echo -n "$OPTARG" | sed 's/\$/\\\$/g')
@@ -41,11 +41,11 @@ if [[ "$PASSWORD" == "" ]]; then
   exit 1
 fi
 if [[ "$SERVER_ADDRESS" == "" ]]; then
-  echo "Must pass option -s."
+  echo "Must pass option -c."
   exit 1
 fi
-if [[ "$SERVER_PORT" == "" ]]; then
-  echo "Must pass option -p."
+if [[ "$LOCATION" == "" ]]; then
+  echo "Must pass option -l."
   exit 1
 fi
 if [[ "$INPUT_PIN" == "" ]]; then
@@ -62,5 +62,5 @@ perl -pi -e "s/_template//ig" $CONFIG
 perl -pi -e "s/SSID/$SSID/g" $CONFIG
 perl -pi -e "s/PASSWORD/$PASSWORD/g" $CONFIG
 perl -pi -e "s/SERVER_ADDRESS/$SERVER_ADDRESS/g" $CONFIG
-perl -pi -e "s/SERVER_PORT/$SERVER_PORT/g" $CONFIG
+perl -pi -e "s/LOCATION/$LOCATION/g" $CONFIG
 perl -pi -e "s/PIN/$INPUT_PIN/g" $CONFIG
