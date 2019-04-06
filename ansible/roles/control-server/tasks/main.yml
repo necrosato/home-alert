@@ -33,3 +33,13 @@
     owner: root
     group: root
     mode: 0644
+
+- name: copy htpasswd file
+  copy:
+    src: htpasswd
+    dest: /etc/nginx/.htpasswd
+    owner: www-data
+    group: www-data
+    mode: 0400
+
+

@@ -9,6 +9,7 @@ def create_control_server(config_path):
     control_server['become'] = True
     control_server['vars_files'] = [ config_path ]
     control_server['roles'] = [ 'control-server' ]
+    return control_server
 
 
 def create_htpasswd(dest, users):
