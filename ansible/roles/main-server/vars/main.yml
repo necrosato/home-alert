@@ -1,0 +1,2 @@
+main_server_dir: /home/main-server/main-server/
+photos_dir: "{{ main_server_dir }}/photos/"

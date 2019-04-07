@@ -14,6 +14,7 @@
       - git
       - python3
       - awscli
+      - cron
     update_cache: yes
 
 # Have to use get-pip.py as apt's version throws errors.
@@ -93,14 +94,14 @@
 
 - name: create main server directory
   file:
-    path: /home/main-server/main-server
+    path: "{{ main_server_dir }}"
     state: directory
     owner: main-server
     group: main-server
 
 - name: create photos directory
   file:
-    path: "/home/main-server/main-server/photos"
+    path: "{{ photos_dir }}"
     state: directory
     owner: main-server
     group: main-server
@@ -108,7 +109,7 @@
 - name: copy main server python code
   copy:
     src: "{{ playbook_dir }}/../main-server/python/"
-    dest: "/home/main-server/main-server/python/"
+    dest: "{{ main_server_dir }}/python/"
     owner: main-server
     group: main-server
   notify:
@@ -130,3 +131,19 @@
     dest: "/etc/systemd/system/main-server.service"
   notify:
     - restart main-server
+
+- name: copy location main server config to main server directory
+  copy:
+    src: "clean_storage.sh"
+    dest: "{{ main_server_dir }}/clean_storage.sh"
+    owner: main-server
+    group: main-server
+
+- name: cron job to run clean_storage.sh every night
+  cron:
+    name: "Cron job for cleaning storage"
+    minute: "0"
+    hour: "2"
+    user: main-server
+    job: "{{ main_server_dir }}/clean_storage.sh -d {{ photos_dir }} -n 7"
+
