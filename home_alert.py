@@ -45,11 +45,12 @@ def main():
 
     for main_server in config['main_servers']:
         # Build main server config file
-        main_server_config_path = os.path.join(repo_path, 'ansible/vars/' + main_server['location'] + '.yml')
         main_server_config = {}
         main_server_config['notify_emails'] = config['notify_emails']
         main_server_config['smtp_info'] = config['smtp_info']
+        main_server_config['s3_upload_bucket'] = config['s3_upload_bucket']
         main_server_config['main_server'] = main_server
+        main_server_config_path = os.path.join(repo_path, 'ansible/vars/' + main_server['location'] + '.yml')
         yaml.dump(main_server_config, open(main_server_config_path, 'w'), default_flow_style=False)
 
         # Add main server play to playbook
