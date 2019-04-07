@@ -10,6 +10,9 @@ server {
 
 	server_name _;
 
+  auth_basic "Home Alert Login:";
+  auth_basic_user_file /etc/nginx/.htpasswd;
+
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
