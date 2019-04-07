@@ -43,7 +43,7 @@
       - libgstreamer1.0-dev
       - libqtgstreamer-dev
     update_cache: yes
-  when: opencv_install == "stretch"
+  when: main_server.opencv_install == "stretch"
 
 - name: opencv for stretch pip
   pip:
@@ -52,19 +52,19 @@
       - opencv-python
     state: latest
     executable: /usr/local/bin/pip3
-  when: opencv_install == "stretch"
+  when: main_server.opencv_install == "stretch"
 
 - name: opencv via apt
   apt:
     name:
       - python3-opencv
     update_cache: yes
-  when: opencv_install == "apt"
+  when: main_server.opencv_install == "apt"
 
 # Better have game of thrones queued up, cuz this could take hours.
 - name: opencv via source
   script: install_opencv.sh
-  when: opencv_install == "source"
+  when: main_server.opencv_install == "source"
 
 # END OPENCV
 
@@ -116,7 +116,7 @@
 
 - name: copy location main server config to main server directory
   copy:
-    src: "{{ playbook_dir }}/vars/{{ location }}.yml"
+    src: "{{ playbook_dir }}/vars/{{ main_server.location }}.yml"
     dest: "/home/main-server/main-server/config.yml"
     owner: main-server
     group: main-server
