@@ -79,13 +79,14 @@ def create_trigger_esp8266(main_server, control_server, wifi):
 # Dispatch dictionary to create different trigger types
 TRIGGER_TYPES = {'esp8266': create_trigger_esp8266 }
 
-def create_trigger(trigger_type, main_server, control_server, wifi):
+def create_triggers(main_server, control_server, wifi):
     '''
     Dispatch a trigger create method given a type
     '''
-    if trigger_type in TRIGGER_TYPES:
-        # Call to create method
-        TRIGGER_TYPES[trigger_type](main_server, control_server, wifi)
+    for trigger_type in main_server['triggers']:
+        if trigger_type in TRIGGER_TYPES:
+            # Call to create method
+            TRIGGER_TYPES[trigger_type](main_server, control_server, wifi)
 
 
 def main():
@@ -108,8 +109,7 @@ def main():
 
     for main_server in config['main_servers']:
         # Generate trigger resources
-        for key in main_server['triggers']:
-            create_trigger(key, main_server, config['control_server'], config['wifi'])
+        create_triggers(main_server, config['control_server'], config['wifi'])
 
         # Build main server config file
         main_server_config = {}
