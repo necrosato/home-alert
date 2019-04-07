@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config, 'r'))
-    # TODO: Don't bother pulling these out, pass dict to MomeAlertMainServer
+    # TODO: Don't bother pulling these out, pass dict to HomeAlertMainServer
     location = config['main_server']['location']
     port = config['main_server']['server_port']
     video_device = config['main_server']['video_device']
