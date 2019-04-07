@@ -1,6 +1,7 @@
 import argparse
 import yaml
 import os
+import shutil
 import subprocess
 import random
 import string
@@ -44,8 +45,8 @@ def create_trigger_esp8266(main_server, control_server, wifi):
     '''
     Generate the files needed for an esp8266 trigger
     '''
-    print('Creating esp8266 trigger')
     location = main_server['location']
+    print('Creating {} esp8266 trigger'.format(location))
     trigger = main_server['triggers']['esp8266']
 
     # Generate credentials using location as username and random password
@@ -55,12 +56,24 @@ def create_trigger_esp8266(main_server, control_server, wifi):
     trigger['web_credentials'] = trigger_creds
     control_server['web_credentials'].append(trigger_creds)
 
+    example_dir = REPO_PATH + '/triggers/esp8266_example/trigger'
     # Render jinja2 arduino config template
-    with open(REPO_PATH + '/triggers/esp8266_example/trigger/config.h.j2', 'r') as f:
+    with open(example_dir + '/config.h.j2', 'r') as f:
         config_template = jinja2.Template(f.read())
     trigger_config = config_template.render(location=location,
             control_server_address=control_server['address'], wifi=wifi, trigger=trigger)
-    print(trigger_config)
+    
+    # Copy sketch files
+    trigger_dir = REPO_PATH + '/triggers/build/' + location + '/esp8266'
+    if not os.path.exists(trigger_dir):
+        os.makedirs(trigger_dir)
+    trigger_sketch_dir = trigger_dir + '/trigger'
+    # Dest dir must not exist for copytree to work
+    if os.path.exists(trigger_sketch_dir):
+        shutil.rmtree(trigger_sketch_dir)
+    shutil.copytree(example_dir, trigger_sketch_dir, ignore=shutil.ignore_patterns('*.j2'))
+    with open(trigger_sketch_dir + '/config.h', 'w') as f:
+        f.write(trigger_config + '\n')
 
 
 # Dispatch dictionary to create different trigger types
