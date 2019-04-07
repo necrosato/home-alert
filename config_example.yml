@@ -18,15 +18,20 @@ control_server:
 
 # List of emails to send notifications when a location is triggered.
 notify_emails:
-  - "sato@naookie.com"
+  - "example@gmail.com"
 
 # Main Server Definitions
 main_servers:
   # Each element in this list defines a main server. Add elements to define multiple main servers.
-  - location: "front_door"
+  # Location is an arbitrary identifier grouping a main server and trigger
+  - location: "location"
+    # Address of main server target host
     address: "10.0.0.138"
+    # Port to run main server application
     server_port: 5000
+    # Username of user with passwordless sudo, for ansible
     user: "pi"
+    # The video device to use for video capture
     video_device: "/dev/video0"
     video_width: 1280
     video_height: 720
@@ -39,6 +44,13 @@ main_servers:
     # If using source on a raspberry pi, you must have a swap partition set up.
     # Otherwise you will risk running out of ram during compilation.
     opencv_install: "skip"
+    # Optionally set up a trigger
+    triggers:
+      # triggers may contain the following keys
+      # esp8266: Generate an arduino sketch for this main server location. Web credentials will be generated.
+      esp8266:
+        # The digital pin to use on the board
+        pin: "D6"
 
 # Email to send notifications
 smtp_info:
