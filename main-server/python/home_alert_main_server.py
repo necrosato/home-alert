@@ -30,7 +30,7 @@ class HomeAlertMainServer():
     '''
     Class holding a flask app and smtp server
     '''
-    def __init__(self, location, smtp_info, camera, notify_emails, s3_bucket):
+    def __init__(self, location, smtp_info, camera, notify_emails, s3_bucket = None):
         '''
         location - string
         smtp_info - path to yaml file
@@ -118,13 +118,14 @@ class HomeAlertMainServer():
         If armed, sends emails to notify list.
         Returns a message containing the request time.
         '''
-        time = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
-        response_str = self.location + ' recieved trigger: ' + str(time)
+        dt = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
+        response_str = self.location + ' recieved trigger: ' + str(dt)
 
         # Save some photos 
-        photo_suffix = '/photos/' + str(time)
+        photo_suffix = '/photos/' + str(dt.date()) + '/' + str(dt.time())
         photo_dir = MAIN_SERVER_DIR + photo_suffix
-        os.mkdir(photo_dir)
+        if not os.path.exists(photo_dir):
+            os.makedirs(photo_dir)
         self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
         photos = [photo_dir + '/photo_00.jpeg',
                   photo_dir + '/photo_02.jpeg',
@@ -142,18 +143,20 @@ class HomeAlertMainServer():
                 self.smtp_connect()
                 self.smtp.send_message(msg)
 
-        # Move photos to s3
-        dest = self.s3_bucket + self.location + photo_suffix
-        s3_thread = threading.Thread(target=aws_utils.s3_mv_rmdir,
-                                     args=[photo_dir, dest])
-        s3_thread.start()
+        # Move photos to s3 if a bucket is defined
+        # Do this in another thread
+        if self.s3_bucket is not None:
+            dest = self.s3_bucket + self.location + photo_suffix
+            s3_thread = threading.Thread(target=aws_utils.s3_cp,
+                                         args=[photo_dir, dest])
+            s3_thread.start()
 
         return response_str
 
 
     def status(self):
         '''
-        Returns controller location and arm status
+        Returns controller location and arm status:
         '''
         response_str = 'Location: ' + self.location + '<br>'
         response_str += 'Armed: ' + str(self.armed)

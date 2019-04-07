@@ -27,12 +27,10 @@ main_servers:
     address: "10.0.0.138"
     server_port: 5000
     user: "pi"
-    # S3 bucket
-    upload_path: "s3://com.mybucket/"
     video_device: "/dev/video0"
     video_width: 1280
     video_height: 720
-    # May be one of
+    # opencv_install may be one of
     # apt: install opencv python3 bindings using apt, not available on all distributions.
     # source: Download and compile opencv and python3 bindings, can take **hours**.
     # stretch: Use a combination of apt and pip to get working python3 bindings on raspian stretch
@@ -48,3 +46,7 @@ smtp_info:
   port: 587
   user_address: "example@gmail.com"
   user_pass: "password"
+
+# S3 bucket to upload, optional. Either an s3 url ("s3://com.mybucket/") or null
+# If defined, all captured media will be uploaded to this bucket.
+s3_upload_bucket: null
