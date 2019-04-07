@@ -61,7 +61,7 @@
     update_cache: yes
   when: opencv_install == "apt"
 
-# Better gave game of thrones queued up, cuz this could take hours.
+# Better have game of thrones queued up, cuz this could take hours.
 - name: opencv via source
   script: install_opencv.sh
   when: opencv_install == "source"
