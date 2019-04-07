@@ -39,6 +39,7 @@ def main():
         main_server_config['video_device'] = main_server['video_device']
         main_server_config['video_width'] = main_server['video_width']
         main_server_config['video_height'] = main_server['video_height']
+        main_server_config['opencv_install'] = main_server['opencv_install']
         yaml.dump(main_server_config, open(main_server_config_path, 'w'), default_flow_style=False)
 
         # Add main server play to playbook
