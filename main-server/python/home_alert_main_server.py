@@ -8,13 +8,14 @@ import datetime
 import pytz
 import threading
 
+import home_alert_logging
 from home_alert_camera import HomeAlertCamera
 import aws_utils
 
 # TODO: Pull this out and pass to main server
 MAIN_SERVER_DIR = '/home/main-server/main-server/'
 
-class EndpointAction():
+class EndpointAction:
     '''
     action is expected to return a valid response
     '''
@@ -26,7 +27,7 @@ class EndpointAction():
         return self.action()
 
 
-class HomeAlertMainServer():
+class HomeAlertMainServer:
     '''
     Class holding a flask app and smtp server
     '''
@@ -36,6 +37,7 @@ class HomeAlertMainServer():
         smtp_info - path to yaml file
         camera - HomeAlertCamera Object
         '''
+        self.logger = home_alert_logging.GetHomeAlertLogger("Home Alert Main Server - {}".format(location))
         self.location = location
         self.smtp_info = smtp_info
         self.camera = camera
@@ -43,7 +45,9 @@ class HomeAlertMainServer():
         self.s3_bucket = s3_bucket
         self.armed = True
 
+        self.logger.info("Connecting to mail server")
         self.smtp_connect()
+        self.logger.info("Creating Web Server")
         self.app = Flask('Home Alert Main Server - ' + self.location)
 
         # Add endpoints
