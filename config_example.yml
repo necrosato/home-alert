@@ -44,13 +44,13 @@ main_servers:
     # If using source on a raspberry pi, you must have a swap partition set up.
     # Otherwise you will risk running out of ram during compilation.
     opencv_install: "skip"
-    # Optionally set up a trigger
-    triggers:
-      # triggers may contain the following keys
-      # esp8266: Generate an arduino sketch for this main server location. Web credentials will be generated.
-      esp8266:
-        # The digital pin to use on the board
-        pin: "D6"
+    # Optionally set up a trigger, uncomment to define
+    # triggers:
+    #   # triggers may contain the following keys
+    #   # esp8266: Generate an arduino sketch for this main server location. Web credentials will be generated.
+    #   esp8266:
+    #     # The digital pin to use on the board
+    #     pin: "D6"
 
 # Email to send notifications
 smtp_info:
@@ -59,6 +59,10 @@ smtp_info:
   user_address: "example@gmail.com"
   user_pass: "password"
 
-# S3 bucket to upload, optional. Either an s3 url ("s3://com.mybucket/") or null
-# If defined, all captured media will be uploaded to this bucket.
-s3_upload_bucket: null
+# Optionally provide aws credentials and a bucket to upload captured media
+# Uncomment and fill out to define
+# aws:
+#   s3_upload_bucket: ""
+#   region: ""
+#   aws_access_key_id: ""
+#   aws_secret_access_key: ""

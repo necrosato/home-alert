@@ -13,7 +13,6 @@
       - vim
       - git
       - python3
-      - awscli
       - cron
     update_cache: yes
 
@@ -25,7 +24,6 @@
 - name: install main server python dependencies
   pip:
     name:
-      - awscli
       - pyyaml
       - flask
       - pytz
@@ -68,29 +66,6 @@
   when: main_server.opencv_install == "source"
 
 # END OPENCV
-
-- name: create aws directory
-  file:
-    path: /home/main-server/.aws
-    state: directory
-    owner: main-server
-    group: main-server
-
-- name: copy aws config
-  copy:
-    src: "{{ playbook_dir }}/secrets/aws/config"
-    dest: "/home/main-server/.aws/config"
-    owner: main-server
-    group: main-server
-    mode: 0400
-
-- name: copy aws credentials
-  copy:
-    src: "{{ playbook_dir }}/secrets/aws/credentials"
-    dest: "/home/main-server/.aws/credentials"
-    owner: main-server
-    group: main-server
-    mode: 0400
 
 - name: create main server directory
   file:
