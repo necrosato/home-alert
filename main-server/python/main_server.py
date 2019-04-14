@@ -22,7 +22,7 @@ def main():
 
     smtp_info = config['smtp_info']
     notify_emails = config['notify_emails']
-    s3_bucket = config['s3_upload_bucket']
+    s3_bucket = None if 's3_upload_bucket' not in config else config['s3_upload_bucket']
 
     home_alert = HomeAlertMainServer(location, smtp_info, camera, notify_emails, s3_bucket)
     # Start web server

@@ -20,6 +20,7 @@ def create_control_server(config_path):
     control_server['become'] = True
     control_server['vars_files'] = [ config_path ]
     control_server['roles'] = [ 'control-server' ]
+    control_server['vars'] = { 'user': 'control-server' }
     return control_server
 
 
@@ -83,10 +84,11 @@ def create_triggers(main_server, control_server, wifi):
     '''
     Dispatch a trigger create method given a type
     '''
-    for trigger_type in main_server['triggers']:
-        if trigger_type in TRIGGER_TYPES:
-            # Call to create method
-            TRIGGER_TYPES[trigger_type](main_server, control_server, wifi)
+    if 'triggers' in main_server:
+        for trigger_type in main_server['triggers']:
+            if trigger_type in TRIGGER_TYPES:
+                # Call to create method
+                TRIGGER_TYPES[trigger_type](main_server, control_server, wifi)
 
 
 def main():
@@ -107,6 +109,11 @@ def main():
     inventory = '[control_server]\n{} ansible_user={}\n'.format(
             config['control_server']['address'], config['control_server']['user'])
 
+    # Generate aws yaml file if defined
+    aws_config_path = os.path.join(REPO_PATH, 'ansible/vars/aws.yml')
+    if 'aws' in config:
+        yaml.dump(config['aws'], open(aws_config_path, 'w'), default_flow_style=False)
+
     for main_server in config['main_servers']:
         # Generate trigger resources
         create_triggers(main_server, config['control_server'], config['wifi'])
@@ -115,9 +122,10 @@ def main():
         main_server_config = {}
         main_server_config['notify_emails'] = config['notify_emails']
         main_server_config['smtp_info'] = config['smtp_info']
-        main_server_config['s3_upload_bucket'] = config['s3_upload_bucket']
         main_server_config['main_server'] = main_server
         main_server_config_path = os.path.join(REPO_PATH, 'ansible/vars/' + main_server['location'] + '.yml')
+        if 'aws' in config:
+            main_server_config['s3_upload_bucket'] = config['aws']['s3_upload_bucket']
         yaml.dump(main_server_config, open(main_server_config_path, 'w'), default_flow_style=False)
 
         # Add main server play to playbook
@@ -126,6 +134,10 @@ def main():
         host['become'] = True
         host['vars_files'] = [ main_server_config_path ]
         host['roles'] = [ 'main-server' ]
+        if 'aws' in config:
+            host['vars_files'].append(aws_config_path)
+            host['roles'].append('aws')
+        host['vars'] = { 'user': 'main-server' }
         ansible_playbook.append(host)
         # Add main server to inventory
         inventory += '[{}]\n{} ansible_user={}\n'.format(
@@ -135,8 +147,9 @@ def main():
     htpasswd_path = os.path.join(REPO_PATH, 'ansible/roles/control-server/files/htpasswd')
     create_htpasswd(htpasswd_path, config['control_server']['web_credentials'])
 
-
+    # Write playbook
     yaml.dump(ansible_playbook, open(playbook_path, 'w'), default_flow_style=False)
+    # Write inventory file
     inventory_path = os.path.join(REPO_PATH, 'ansible/hosts')
     with open(inventory_path, 'w') as f:
         f.write(inventory)
