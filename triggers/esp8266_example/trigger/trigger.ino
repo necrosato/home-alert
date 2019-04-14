@@ -13,6 +13,7 @@
 //#include "pins_arduino.h"
 #include "config.h"
 
+int switch_status;
 int wifi_status;
 
 void setup() {
