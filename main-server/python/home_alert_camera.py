@@ -9,7 +9,7 @@ def get_video_capture(device_path):
     video_capture = cv2.VideoCapture(device_path)
     return video_capture
 
-class HomeAlertCamera():
+class HomeAlertCamera:
     '''
     A class to access a video camera using opencv
     Takes device path to video camera
