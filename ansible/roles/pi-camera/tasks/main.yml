@@ -1,0 +1,8 @@
+- name: enable the camera in the Pi's boot config
+  script: enable_cam.sh 
+
+- name: load the bcm2835-v4l2 kernel module
+  script: load_mod.sh
+
+- name: reboot Pi to save changes
+  reboot:
