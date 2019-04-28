@@ -1,9 +1,19 @@
 - name: enable the camera in the Pi's boot config
-  script: enable_cam.sh 
+  lineinfile:
+    path: /boot/config.txt 
+    regexp: '^start_x'
+    line: 'start_x 1'
+  lineinfile:
+    path: /boot/config.txt 
+    regexp: '^gpu_mem'
+    line: 'gpu_mem 128'
   notify:
     reboot pi
 
 - name: load the bcm2835-v4l2 kernel module
-  script: load_mod.sh
+  lineinfile:
+    path: /etc/modules
+    regexp: '^bcm2835-v4l2'
+    line: 'bcm2835-v4l2'
   notify:
     reboot pi
