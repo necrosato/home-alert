@@ -1,11 +1,11 @@
 - name: enable the camera in the Pi's boot config
   lineinfile:
     path: /boot/config.txt 
-    regexp: '^start_x'
+    regexp: 'start_x'
     line: 'start_x 1'
   lineinfile:
     path: /boot/config.txt 
-    regexp: '^gpu_mem'
+    regexp: 'gpu_mem'
     line: 'gpu_mem 128'
   notify:
     reboot pi
