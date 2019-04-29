@@ -3,6 +3,10 @@
     path: /boot/config.txt 
     regexp: 'start_x'
     line: 'start_x 1'
+  notify:
+    reboot pi
+
+- name: assign enough ram for camera functionality
   lineinfile:
     path: /boot/config.txt 
     regexp: 'gpu_mem'
