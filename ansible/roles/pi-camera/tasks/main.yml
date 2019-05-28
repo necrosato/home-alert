@@ -4,7 +4,8 @@
     regexp: 'start_x'
     line: 'start_x 1'
   notify:
-    reboot pi
+    - reboot pi
+    - wait for reconnection after reboot
 
 - name: assign enough ram for camera functionality
   lineinfile:
@@ -12,7 +13,8 @@
     regexp: 'gpu_mem'
     line: 'gpu_mem 128'
   notify:
-    reboot pi
+    - reboot pi
+    - wait for reconnection after reboot
 
 - name: load the bcm2835-v4l2 kernel module
   lineinfile:
@@ -20,4 +22,5 @@
     regexp: '^bcm2835-v4l2'
     line: 'bcm2835-v4l2'
   notify:
-    reboot pi
+    - reboot pi
+    - wait for reconnection after reboot
