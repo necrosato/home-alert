@@ -27,6 +27,7 @@ sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavform
 sudo apt-get install python3-dev python3-numpy libjpeg-dev
 
 CVDIR=/tmp/opencv_source
+rm -rf $CVDIR
 git clone https://github.com/opencv/opencv $CVDIR
 cd $CVDIR
 mkdir build
