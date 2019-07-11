@@ -137,6 +137,9 @@ def main():
         if 'aws' in config:
             host['vars_files'].append(aws_config_path)
             host['roles'].append('aws')
+        # Check camera type
+        if main_server['cam_type'] == "pi":
+            host['roles'].append('pi-camera')
         host['vars'] = { 'user': 'main-server' }
         ansible_playbook.append(host)
         # Add main server to inventory

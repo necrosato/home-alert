@@ -20,11 +20,11 @@ if [[ "$?" == "0" ]]; then
 fi
 
 # For compilation
-sudo apt-get install build-essential
+sudo apt-get -y install build-essential
 # Required
-sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get -y install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 # Required for python3 cv2 module
-sudo apt-get install python3-dev python3-numpy libjpeg-dev
+sudo apt-get -y install python3-dev python3-numpy libjpeg-dev
 
 CV_DIR=/tmp/opencv_source
 git clone https://github.com/opencv/opencv $CVDIR

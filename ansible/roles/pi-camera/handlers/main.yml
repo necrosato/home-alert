@@ -1,0 +1,14 @@
+- name: reboot pi
+  shell: sleep 5 && reboot && sleep 1
+  async: 1
+  poll: 0
+  become: true
+
+- name: wait for reconnection after reboot
+  local_action:
+    module: wait_for
+    host: "{{ inventory_hostname }}"
+    port: 22
+    delay: 10
+  become: false
+    
