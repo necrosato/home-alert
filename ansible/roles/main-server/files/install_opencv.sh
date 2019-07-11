@@ -1,13 +1,14 @@
 #!/bin/bash
 
-while getopts "ht:" opt; do
+while getopts "hj:" opt; do
   case $opt in
     h )
       echo "Build and install opencv with python3 support."
       echo " -h : Display this help message."
       echo " -j : The number of make jobs for compilation. Default max. ('make -j' value)"
+      exit 0
       ;;
-    t )
+    j )
       MAKE_J=$OPTARG
       ;;
   esac
