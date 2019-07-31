@@ -14,7 +14,7 @@ while getopts "hj:" opt; do
   esac
 done
 
-# if bindings already available, no need to build
+# If bindings already available, no need to build
 python3 -c "import cv2"
 if [[ "$?" == "0" ]]; then
   exit 0
@@ -40,19 +40,30 @@ sudo /etc/init.d/dphys-swapfile stop
 sudo /etc/init.d/dphys-swapfile start
 
 # Get source
-VERSION="$(curl -s https://github.com/opencv/opencv/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')"
-echo "latest version: ${VERSION}"
-echo "downloading: https://github.com/opencv/opencv/archive/${VERSION}.tar.gz"
-
 CVDIR=/tmp/opencv_source
 CVTAR=/tmp/opencv_source.tar.gz
+CV_CONTRIBDIR=/tmp/opencv_contrib
+CV_CONTRIBTAR=/tmp/opencv_contrib.tar.gz
+## Get latest version
+VERSION="$(curl -s https://github.com/opencv/opencv/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')"
+echo "latest version: ${VERSION}"
+## Download
+echo "downloading: https://github.com/opencv/opencv/archive/${VERSION}.tar.gz"
 wget -O ${CVTAR} "https://github.com/opencv/opencv/archive/${VERSION}.tar.gz"
+echo "downloading: https://github.com/opencv/opencv_contrib/archive/${VERSION}.tar.gz"
+wget -O ${CV_CONTRIBTAR} "https://github.com/opencv/opencv_contrib/archive/${VERSION}.tar.gz"
+## Unpack
 mkdir -p ${CVDIR}
 tar -xzvf ${CVTAR} --strip=1 -C ${CVDIR}
 rm ${CVTAR}
+mkdir -p ${CV_CONTRIBDIR}
+tar -xzvf ${CV_CONTRIBTAR} --strip=1 -C ${CV_CONTRIBDIR}
+rm ${CV_CONTRIBTAR}
 cd ${CVDIR}
 mkdir build
 cd build
+
+# Configure build
 cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_opencv_python3=On -D INSTALL_PYTHON_EXAMPLES=OFF -D BUILD_EXAMPLES=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF ..
 
 # Compile
