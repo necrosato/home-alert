@@ -20,14 +20,19 @@ if [[ "$?" == "0" ]]; then
   exit 0
 fi
 
-# For compilation
-sudo apt-get -y install build-essential
-# Required
-sudo apt-get -y install cmake git libgtk-3-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev
-# Required for python3 cv2 module
-sudo apt-get -y install python3-dev python3-numpy libjpeg-dev
-# Numerical optimizations fro OpenCV
-sudo apt-get -y install libatlas-base-dev gfortran
+# Dependencies
+## Build
+sudo apt-get -y install build-essential cmake pkg-config
+## Python
+sudo apt-get -y install python3-dev python3-numpy libpython3-dev
+## Audio/Video
+sudo apt-get -y install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libgstreamer-plugins-base1.0-dev
+## Image formats
+sudo apt-get -y install libjpeg-dev libpng-dev libtiff5-dev libjasper-dev
+## Multithreading
+sudo apt-get -y install libtbb2 libtbb-dev
+## Numerical optimizations for OpenCV
+sudo apt-get -y install libatlas-base-dev
 
 # Increase swap size
 sudo sed -i "/^CONF_SWAPSIZE=/c\CONF_SWAPSIZE=2048" /etc/dphys-swapfile
