@@ -34,11 +34,6 @@ sudo apt-get -y install libtbb2 libtbb-dev
 ## Numerical optimizations for OpenCV
 sudo apt-get -y install libatlas-base-dev
 
-# Increase swap size
-sudo sed -i "/^CONF_SWAPSIZE=/c\CONF_SWAPSIZE=2048" /etc/dphys-swapfile
-sudo /etc/init.d/dphys-swapfile stop
-sudo /etc/init.d/dphys-swapfile start
-
 # Get source
 CVDIR=/tmp/opencv_source
 CVTAR=/tmp/opencv_source.tar.gz
@@ -74,8 +69,3 @@ else
 fi
 sudo make install
 sudo ldconfig
-
-# Reset swap size
-sudo sed -i "/^CONF_SWAPSIZE=/c\CONF_SWAPSIZE=100" /etc/dphys-swapfile
-sudo /etc/init.d/dphys-swapfile stop
-sudo /etc/init.d/dphys-swapfile start
