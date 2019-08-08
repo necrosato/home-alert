@@ -58,8 +58,35 @@ cd ${CVDIR}
 mkdir build
 cd build
 
+
+###############  CMAKE FLAGS  ###############################################
+#
+#		
+#		/* Release Flags */
+#		CMAKE_BUILD_TYPE=RELEASE
+#		CMAKE_INSTALL_PREFIX=/usr/local
+#		/* Increase Build Speed */
+#		BUILD_DOCS=OFF
+#		BUILD_PERF_TESTS=OFF
+#		BUILD_TESTS=OFF
+#		BUILD_EXAMPLES=OFF
+#		BUILD_opencv_apps=OFF
+#		BUILD_JAVA=OFF
+#		/* Multi-threading */
+#		WITH_TBB=ON
+#		/* Video 4 Linux support */
+#		WITH_V4L=ON
+#		/* Extra Modules */
+#		OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules
+#		OPENCV_ENABLE_NONFREE=ON
+#		BUILD_opencv_python3=ON
+#		/* Arm Optimizations */
+#		ENABLE_NEON=ON
+#		ENABLE_VFPV3=ON
+#
+##############################################################################
 # Configure build
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_opencv_python3=On -D INSTALL_PYTHON_EXAMPLES=OFF -D BUILD_EXAMPLES=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF ..
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_opencv_apps=OFF -D BUILD_JAVA=OFF -D WITH_TBB=ON -D WITH_V4L=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules -D OPENCV_ENABLE_NONFREE=ON -D BUILD_opencv_python3=ON -D ENABLE_NEON=ON -D ENABLE_VFPV3=ON ..
 
 # Compile
 if [[ "$MAKE_J" == "" ]]; then
