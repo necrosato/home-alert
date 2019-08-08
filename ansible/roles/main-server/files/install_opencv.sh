@@ -20,6 +20,7 @@ if [[ "$?" == "0" ]]; then
   exit 0
 fi
 
+
 # Dependencies
 ## Build
 sudo apt-get -y install build-essential cmake pkg-config
@@ -33,6 +34,7 @@ sudo apt-get -y install libjpeg-dev libpng-dev libtiff5-dev libjasper-dev
 sudo apt-get -y install libtbb2 libtbb-dev
 ## Numerical optimizations for OpenCV
 sudo apt-get -y install libatlas-base-dev
+
 
 # Get source
 CVDIR=/tmp/opencv_source
