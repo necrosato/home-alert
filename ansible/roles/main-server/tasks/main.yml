@@ -24,7 +24,6 @@
 - name: install main server python dependencies
   pip:
     name:
-      - pyyaml
       - flask
       - pytz
     state: latest
@@ -40,7 +39,7 @@
       - libatlas3-base
       - libjasper-dev
       - libgstreamer1.0-dev
-      - libqtgstreamer-dev
+      # - libqtgstreamer-dev
     update_cache: yes
   when: main_server.opencv_install == "stretch"
 
