@@ -21,7 +21,3 @@ or with password login
 ```
 ansible-playbook playbook.yml -i hosts --ask-pass
 ```
-
-# Secrets
-
-The secrets should be stored in the secrets directory, but this must be populated as it is gitignored.

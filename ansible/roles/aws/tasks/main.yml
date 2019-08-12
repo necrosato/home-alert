@@ -1,0 +1,35 @@
+- name: install apt awscli
+  apt:
+    name:
+      - awscli
+    update_cache: yes
+
+- name: update awscli with pip
+  pip:
+    name:
+      - awscli
+    state: latest
+    executable: /usr/local/bin/pip3
+
+- name: create aws directory
+  file:
+    path: "/home/{{ user }}/.aws"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+
+- name: copy aws config
+  template:
+    src: "config.j2"
+    dest: "/home/{{ user }}/.aws/config"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0400
+
+- name: copy aws credentials
+  template:
+    src: "credentials.j2"
+    dest: "/home/main-server/.aws/credentials"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0400

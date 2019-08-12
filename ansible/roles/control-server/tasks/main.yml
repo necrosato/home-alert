@@ -1,0 +1,45 @@
+- name: install reverse proxy server and dependencies
+  apt:
+    name:
+      - vim
+      - bind9
+      - nginx
+      # Needed for ssl
+      - apache2-utils
+    update_cache: yes
+
+# Bind9 needed to resolve names for reverse proxy
+- name: ensure bind9 service is running
+  service:
+    daemon_reload: yes
+    name: bind9.service
+    enabled: yes
+    state: started
+
+- name: copy default nginx site config from template
+  template:
+    src: default.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    restart nginx
+
+- name: copy index.html from template
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy htpasswd file
+  copy:
+    src: htpasswd
+    dest: /etc/nginx/.htpasswd
+    owner: www-data
+    group: www-data
+    mode: 0400
+
+

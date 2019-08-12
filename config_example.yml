@@ -1,0 +1,74 @@
+---
+# This is the main configuration file for the entire Home Alert system.
+# Users should not have to manually edit any other files in this repo but this one.
+
+# WiFi Credentials
+wifi:
+  ssid: "ssid"
+  password: "password"
+
+# Control Server
+control_server:
+  address: "10.0.0.138"
+  user: "pi"
+  web_credentials:
+    # Can have multiple logins to the control server
+    - username: "admin"
+      password: "admin"
+
+# List of emails to send notifications when a location is triggered.
+notify_emails:
+  - "example@gmail.com"
+
+# Main Server Definitions
+main_servers:
+  # Each element in this list defines a main server. Add elements to define multiple main servers.
+  # Location is an arbitrary identifier grouping a main server and trigger
+  - location: "location"
+    # Address of main server target host
+    address: "10.0.0.138"
+    # Port to run main server application
+    server_port: 5000
+    # Username of user with passwordless sudo, for ansible
+    user: "pi"
+
+    # Type of camera:
+    #   "usb" = usb webcam
+    #   "pi" = Raspberry Pi camera module
+    cam_type: "pi"
+
+    # The video device to use for video capture
+    video_device: "/dev/video0"
+    video_width: 1280
+    video_height: 720
+    # opencv_install may be one of
+    # apt: install opencv python3 bindings using apt, not available on all distributions.
+    # source: Download and compile opencv and python3 bindings, can take **hours**.
+    # stretch: Use a combination of apt and pip to get working python3 bindings on raspian stretch
+    # skip: you have installed opencv on your own, do not attempt any installation method.
+    #
+    # If using source on a raspberry pi, you must have a swap partition set up.
+    # Otherwise you will risk running out of ram during compilation.
+    opencv_install: "skip"
+    # Optionally set up a trigger, uncomment to define
+    # triggers:
+    #   # triggers may contain the following keys
+    #   # esp8266: Generate an arduino sketch for this main server location. Web credentials will be generated.
+    #   esp8266:
+    #     # The digital pin to use on the board
+    #     pin: "D6"
+
+# Email to send notifications
+smtp_info:
+  host: "smtp.gmail.com"
+  port: 587
+  user_address: "example@gmail.com"
+  user_pass: "password"
+
+# Optionally provide aws credentials and a bucket to upload captured media
+# Uncomment and fill out to define
+# aws:
+#   s3_upload_bucket: ""
+#   region: ""
+#   aws_access_key_id: ""
+#   aws_secret_access_key: ""

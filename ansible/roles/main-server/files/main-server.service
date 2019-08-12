@@ -8,7 +8,8 @@ Type=simple
 Restart=always
 RestartSec=1
 User=main-server
-ExecStart=/usr/bin/python3 /home/main-server/main-server/python/main_server.py -l /home/main-server/main-server/secrets/smtp_info.json
+ExecStart=/usr/bin/python3 /home/main-server/main-server/python/main_server.py \
+                            -c /home/main-server/main-server/config.yml
 
 [Install]
 WantedBy=multi-user.target
