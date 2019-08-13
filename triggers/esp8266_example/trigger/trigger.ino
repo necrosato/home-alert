@@ -47,7 +47,7 @@ void setup() {
 
 void OnSwitchOpen() {
   Serial.println("Switch opened");
-  Serial.print("Sending request to main server: ");
+  Serial.print("Sending request to home alert node: ");
   Serial.println(request);
   HTTPClient http;
   http.begin(request);

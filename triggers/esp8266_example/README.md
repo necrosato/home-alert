@@ -6,7 +6,7 @@ IDE with a single switch.
 This is a very simple example trigger. Just a microcontroller with TCP/IP
 capabilities and a sensor to detect a physical change, such as a door opening.
 The microcontroller should process the sensor data and then make a web request
-to an endpoint of a main server to notify it.
+to an endpoint of a node to notify it.
 
 ## Microcontroller
 
