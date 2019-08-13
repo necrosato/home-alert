@@ -18,18 +18,18 @@ server {
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ =404;
 	}
-{% for main_server in main_servers %}
+{% for home_alert_node in home_alert_nodes %}
 
-	# This routes to a main server
-	location = /{{ main_server.location }} {
-		proxy_pass http://{{ main_server.address }}:{{ main_server.server_port }}/;
+	# This routes to a Home Alert node
+	location = /{{ home_alert_node.location }} {
+		proxy_pass http://{{ home_alert_node.address }}:{{ home_alert_node.server_port }}/;
 	}
-	location ~ /{{ main_server.location }}/(.*) {
+	location ~ /{{ home_alert_node.location }}/(.*) {
 		proxy_set_header X-Forwarded-Host $host:$server_port;
 		proxy_set_header X-Forwarded-Server $host;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		resolver 127.0.0.1 [::1];
-		set $target http://{{ main_server.address }}:{{ main_server.server_port }}/$1;
+		set $target http://{{ home_alert_node.address }}:{{ home_alert_node.server_port }}/$1;
 		proxy_pass $target;
 	}
 {% endfor %}
