@@ -59,11 +59,6 @@
     update_cache: yes
   when: home_alert_node.opencv_install == "apt"
 
-# Better have game of thrones queued up, cuz this could take hours.
-- name: opencv via source
-  script: install_opencv.sh
-  when: home_alert_node.opencv_install == "source"
-
 # END OPENCV
 
 - name: create home alert directory

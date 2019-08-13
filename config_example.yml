@@ -42,13 +42,10 @@ home_alert_nodes:
     video_width: 1280
     video_height: 720
     # opencv_install may be one of
-    # apt: install opencv python3 bindings using apt, not available on all distributions.
-    # source: Download and compile opencv and python3 bindings, can take **hours**.
-    # stretch: Use a combination of apt and pip to get working python3 bindings on raspbian stretch
+    # apt: install opencv python3 bindings using apt, works with Raspbian Buster.
+    # stretch: Use a combination of apt and pip to get working python3 bindings on Raspbian Stretch.
     # skip: you have installed opencv on your own, do not attempt any installation method.
     #
-    # If using source on a raspberry pi, you must have a swap partition set up.
-    # Otherwise you will risk running out of ram during compilation.
     opencv_install: "skip"
     # Optionally set up a trigger, uncomment to define
     # triggers:
