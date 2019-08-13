@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=home-alert
-ExecStart=/usr/bin/python3 /home/home-alert/home-alert/python/home-alert.py \
+ExecStart=/usr/bin/python3 /home/home-alert/home-alert/python/node.py \
                             -c /home/home-alert/home-alert/config.yml
 
 [Install]
