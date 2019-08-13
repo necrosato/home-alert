@@ -1,2 +1,2 @@
-main_server_dir: /home/main-server/main-server/
-photos_dir: "{{ main_server_dir }}/photos/"
+home_alert_dir: /home/home-alert/home-alert/
+photos_dir: "{{ home_alert_dir }}/photos/"

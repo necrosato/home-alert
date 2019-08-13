@@ -1,7 +1,7 @@
 ---
-- name: restart main-server
+- name: restart home-alert-node
   service:
     daemon_reload: yes
-    name: main-server.service
+    name: home-alert.service
     enabled: yes
     state: restarted
