@@ -32,9 +32,9 @@ Has also been tested with raspberry pi cameras.
 
 ### Locations
 
-A [main server](./main-server/README.md) defines a location. These are logical identifiers for different pieces of the home alert network.
-Each location can be alarmed by a set of [triggers](./trigger/README.md).
+A [home alert node](./home-alert-node/README.md) defines a location. These are logical identifiers for different pieces of the home alert network.
+Each location can be alarmed by a set of [triggers](./triggers/README.md).
 
 ### Design Diagram
 
-![](https://docs.google.com/drawings/d/e/2PACX-1vSEVFTtqQK6O_ZhOK2cQsX6Z9cOhI2-P0edLwlsttmLBTdILeRkZJulocc0ExMeHQ3qqyrDxjxTxg7x/pub?w=1440&h=1080)
+![](https://docs.google.com/drawings/d/e/2PACX-1vSxGCZagLkbymGCKPSnHT8GqstmMvKuXujhe91tW-lp0trkRhOifsZffc3oZiCXkfRLcH44u1iE2d7s/pub?w=1440&h=1080)

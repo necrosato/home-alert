@@ -42,13 +42,13 @@ def random_generator(size=8, chars=string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
 
 
-def create_trigger_esp8266(main_server, control_server, wifi):
+def create_trigger_esp8266(home_alert_node, control_server, wifi):
     '''
     Generate the files needed for an esp8266 trigger
     '''
-    location = main_server['location']
+    location = home_alert_node['location']
     print('Creating {} esp8266 trigger'.format(location))
-    trigger = main_server['triggers']['esp8266']
+    trigger = home_alert_node['triggers']['esp8266']
 
     # Generate credentials using location as username and random password
     username = location + '_trigger_' + random_generator(4, string.digits)
@@ -80,15 +80,15 @@ def create_trigger_esp8266(main_server, control_server, wifi):
 # Dispatch dictionary to create different trigger types
 TRIGGER_TYPES = {'esp8266': create_trigger_esp8266 }
 
-def create_triggers(main_server, control_server, wifi):
+def create_triggers(home_alert_node, control_server, wifi):
     '''
     Dispatch a trigger create method given a type
     '''
-    if 'triggers' in main_server:
-        for trigger_type in main_server['triggers']:
+    if 'triggers' in home_alert_node:
+        for trigger_type in home_alert_node['triggers']:
             if trigger_type in TRIGGER_TYPES:
                 # Call to create method
-                TRIGGER_TYPES[trigger_type](main_server, control_server, wifi)
+                TRIGGER_TYPES[trigger_type](home_alert_node, control_server, wifi)
 
 
 def main():
@@ -114,37 +114,37 @@ def main():
     if 'aws' in config:
         yaml.dump(config['aws'], open(aws_config_path, 'w'), default_flow_style=False)
 
-    for main_server in config['main_servers']:
+    for home_alert_node in config['home_alert_nodes']:
         # Generate trigger resources
-        create_triggers(main_server, config['control_server'], config['wifi'])
+        create_triggers(home_alert_node, config['control_server'], config['wifi'])
 
-        # Build main server config file
-        main_server_config = {}
-        main_server_config['notify_emails'] = config['notify_emails']
-        main_server_config['smtp_info'] = config['smtp_info']
-        main_server_config['main_server'] = main_server
-        main_server_config_path = os.path.join(REPO_PATH, 'ansible/vars/' + main_server['location'] + '.yml')
+        # Build node config file
+        home_alert_node_config = {}
+        home_alert_node_config['notify_emails'] = config['notify_emails']
+        home_alert_node_config['smtp_info'] = config['smtp_info']
+        home_alert_node_config['home_alert_node'] = home_alert_node
+        home_alert_node_config_path = os.path.join(REPO_PATH, 'ansible/vars/' + home_alert_node['location'] + '.yml')
         if 'aws' in config:
-            main_server_config['s3_upload_bucket'] = config['aws']['s3_upload_bucket']
-        yaml.dump(main_server_config, open(main_server_config_path, 'w'), default_flow_style=False)
+            home_alert_node_config['s3_upload_bucket'] = config['aws']['s3_upload_bucket']
+        yaml.dump(home_alert_node_config, open(home_alert_node_config_path, 'w'), default_flow_style=False)
 
-        # Add main server play to playbook
+        # Add home alert node play to playbook
         host = {}
-        host['hosts'] = main_server['location']
+        host['hosts'] = home_alert_node['location']
         host['become'] = True
-        host['vars_files'] = [ main_server_config_path ]
-        host['roles'] = [ 'main-server' ]
+        host['vars_files'] = [ home_alert_node_config_path ]
+        host['roles'] = [ 'home-alert-node' ]
         if 'aws' in config:
             host['vars_files'].append(aws_config_path)
             host['roles'].append('aws')
         # Check camera type
-        if main_server['cam_type'] == "pi":
+        if home_alert_node['cam_type'] == "pi":
             host['roles'].append('pi-camera')
-        host['vars'] = { 'user': 'main-server' }
+        host['vars'] = { 'user': 'home-alert' }
         ansible_playbook.append(host)
-        # Add main server to inventory
+        # Add home alert node to inventory
         inventory += '[{}]\n{} ansible_user={}\n'.format(
-                main_server['location'], main_server['address'], main_server['user'])
+                home_alert_node['location'], home_alert_node['address'], home_alert_node['user'])
 
     # Generate .htpasswd file for control server
     htpasswd_path = os.path.join(REPO_PATH, 'ansible/roles/control-server/files/htpasswd')

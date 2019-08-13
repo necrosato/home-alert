@@ -1,13 +1,13 @@
 ---
-- name: create the main server user
+- name: create the home alert user
   user:
-    name: main-server
+    name: home-alert
     groups:
       - audio
       - video
     shell: /bin/bash
 
-- name: install main server apt dependencies
+- name: install home alert node apt dependencies
   apt:
     name:
       - vim
@@ -21,7 +21,7 @@
 - name: install pip using get-pip.py
   script: install_pip.sh
 
-- name: install main server python dependencies
+- name: install home alert node python dependencies
   pip:
     name:
       - flask
@@ -41,7 +41,7 @@
       - libgstreamer1.0-dev
       # - libqtgstreamer-dev
     update_cache: yes
-  when: main_server.opencv_install == "stretch"
+  when: home_alert_node.opencv_install == "stretch"
 
 - name: opencv for stretch pip
   pip:
@@ -50,74 +50,74 @@
       - opencv-python
     state: latest
     executable: /usr/local/bin/pip3
-  when: main_server.opencv_install == "stretch"
+  when: home_alert_node.opencv_install == "stretch"
 
 - name: opencv via apt
   apt:
     name:
       - python3-opencv
     update_cache: yes
-  when: main_server.opencv_install == "apt"
+  when: home_alert_node.opencv_install == "apt"
 
 # Better have game of thrones queued up, cuz this could take hours.
 - name: opencv via source
   script: install_opencv.sh
-  when: main_server.opencv_install == "source"
+  when: home_alert_node.opencv_install == "source"
 
 # END OPENCV
 
-- name: create main server directory
+- name: create home alert directory
   file:
-    path: "{{ main_server_dir }}"
+    path: "{{ home_alert_dir }}"
     state: directory
-    owner: main-server
-    group: main-server
+    owner: home-alert
+    group: home-alert
 
 - name: create photos directory
   file:
     path: "{{ photos_dir }}"
     state: directory
-    owner: main-server
-    group: main-server
+    owner: home-alert
+    group: home-alert
 
-- name: copy main server python code
+- name: copy home alert node python code
   copy:
-    src: "{{ playbook_dir }}/../main-server/python/"
-    dest: "{{ main_server_dir }}/python/"
-    owner: main-server
-    group: main-server
+    src: "{{ playbook_dir }}/../home-alert-node/python/"
+    dest: "{{ home_alert_dir }}/python/"
+    owner: home-alert
+    group: home-alert
   notify:
-    - restart main-server
+    - restart home-alert
 
-- name: copy location main server config to main server directory
+- name: copy location node config to home alert directory
   copy:
-    src: "{{ playbook_dir }}/vars/{{ main_server.location }}.yml"
-    dest: "/home/main-server/main-server/config.yml"
-    owner: main-server
-    group: main-server
+    src: "{{ playbook_dir }}/vars/{{ home_alert_node.location }}.yml"
+    dest: "/home/home-alert/home-alert/config.yml"
+    owner: home-alert
+    group: home-alert
     mode: 0600
   notify:
-    - restart main-server
+    - restart home-alert
 
-- name: copy main-server systemd service unit file
+- name: copy home-alert systemd service unit file
   copy:
-    src: "main-server.service"
-    dest: "/etc/systemd/system/main-server.service"
+    src: "home-alert.service"
+    dest: "/etc/systemd/system/home-alert.service"
   notify:
-    - restart main-server
+    - restart home-alert
 
-- name: copy location main server config to main server directory
+- name: copy cleanup script to home alert directory
   copy:
     src: "clean_storage.sh"
-    dest: "{{ main_server_dir }}/clean_storage.sh"
-    owner: main-server
-    group: main-server
+    dest: "{{ home_alert_dir }}/clean_storage.sh"
+    owner: home-alert
+    group: home-alert
 
 - name: cron job to run clean_storage.sh every night
   cron:
     name: "Cron job for cleaning storage"
     minute: "0"
     hour: "2"
-    user: main-server
-    job: "{{ main_server_dir }}/clean_storage.sh -d {{ photos_dir }} -n 7"
+    user: home-alert
+    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ photos_dir }} -n 7"
 

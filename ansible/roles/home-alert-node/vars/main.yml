@@ -1,0 +1,2 @@
+home_alert_dir: /home/home-alert/home-alert/
+photos_dir: "{{ home_alert_dir }}/photos/"

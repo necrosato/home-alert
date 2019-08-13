@@ -12,8 +12,8 @@ import home_alert_logging
 from home_alert_camera import HomeAlertCamera
 import aws_utils
 
-# TODO: Pull this out and pass to main server
-MAIN_SERVER_DIR = '/home/main-server/main-server/'
+# TODO: Pull this out and pass to node
+NODE_DIR = '/home/home-alert/home-alert/'
 
 class EndpointAction:
     '''
@@ -27,7 +27,7 @@ class EndpointAction:
         return self.action()
 
 
-class HomeAlertMainServer:
+class HomeAlertWebServer:
     '''
     Class holding a flask app and smtp server
     '''
@@ -37,7 +37,7 @@ class HomeAlertMainServer:
         smtp_info - path to yaml file
         camera - HomeAlertCamera Object
         '''
-        self.logger = home_alert_logging.GetHomeAlertLogger("Home Alert Main Server - {}".format(location))
+        self.logger = home_alert_logging.GetHomeAlertLogger("Home Alert Node - {}".format(location))
         self.location = location
         self.smtp_info = smtp_info
         self.camera = camera
@@ -48,7 +48,7 @@ class HomeAlertMainServer:
         self.logger.info("Connecting to mail server")
         self.smtp_connect()
         self.logger.info("Creating Web Server")
-        self.app = Flask('Home Alert Main Server - ' + self.location)
+        self.app = Flask('Home Alert Node - ' + self.location)
 
         # Add endpoints
         self.add_endpoint(endpoint='/',
@@ -102,7 +102,7 @@ class HomeAlertMainServer:
 
     def arm(self):
         '''
-        Arms the server.
+        Arms the node.
         '''
         self.armed = True
         return self.location + ' is armed.'
@@ -110,7 +110,7 @@ class HomeAlertMainServer:
 
     def disarm(self):
         '''
-        Disarms the server.
+        Disarms the node.
         '''
         self.armed = False
         return self.location + ' is disarmed.'
@@ -127,7 +127,7 @@ class HomeAlertMainServer:
 
         # Save some photos 
         photo_suffix = '/photos/' + str(dt.date()) + '/' + str(dt.time())
-        photo_dir = MAIN_SERVER_DIR + photo_suffix
+        photo_dir = NODE_DIR + photo_suffix
         if not os.path.exists(photo_dir):
             os.makedirs(photo_dir)
         self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
@@ -160,7 +160,7 @@ class HomeAlertMainServer:
 
     def status(self):
         '''
-        Returns controller location and arm status:
+        Returns node location and arm status:
         '''
         response_str = 'Location: ' + self.location + '<br>'
         response_str += 'Armed: ' + str(self.armed)
