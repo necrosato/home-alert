@@ -1,0 +1,15 @@
+[Unit]
+Description=Necrosato's Home Alert Node
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=home-alert
+ExecStart=/usr/bin/python3 /home/home-alert/home-alert/python/home-alert.py \
+                            -c /home/home-alert/home-alert/config.yml
+
+[Install]
+WantedBy=multi-user.target
