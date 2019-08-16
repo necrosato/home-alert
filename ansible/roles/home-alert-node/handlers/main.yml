@@ -1,5 +1,5 @@
 ---
-- name: restart home-alert-node
+- name: restart home-alert service
   service:
     daemon_reload: yes
     name: home-alert.service

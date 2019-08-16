@@ -87,7 +87,7 @@
     owner: home-alert
     group: home-alert
   notify:
-    - restart home-alert
+    - restart home-alert service
 
 - name: copy location node config to home alert directory
   copy:
@@ -97,14 +97,14 @@
     group: home-alert
     mode: 0600
   notify:
-    - restart home-alert
+    - restart home-alert service
 
 - name: copy home-alert systemd service unit file
   copy:
     src: "home-alert.service"
     dest: "/etc/systemd/system/home-alert.service"
   notify:
-    - restart home-alert
+    - restart home-alert service
 
 - name: copy cleanup script to home alert directory
   copy:
