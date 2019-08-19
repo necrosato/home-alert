@@ -11,7 +11,6 @@ Some steps must be taken on each host that is going to have home alert software 
 2. Ensure that the host used to deploy the installation can ssh into each of the users of the target hosts via ssh keys.
 3. Install ansible
  * `$ sudo apt-get install ansible`
-4. Ensure the `python3-opencv` package is available via apt. If not, you will have to install OpenCV with python3 bindings via some other method.
 
 ## Installation
 
@@ -24,7 +23,7 @@ python3 home-alert.py -c /path/to/config/file
 ansible-playbook -i ./ansible/hosts ./ansible/playbook.yml
 ```
 
-Python modules needed:
+Python modules needed to create playbook:
 * Jinja2
 * pyyaml
 

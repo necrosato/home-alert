@@ -43,9 +43,9 @@ home_alert_nodes:
     video_height: 720
     # opencv_install may be one of
     # True: install opencv python3 bindings using apt, works with Raspbian Buster.
-    # False: you have installed opencv on your own, do not attempt any installation method.
+    # False: you have installed opencv on your own or opencv is not available via apt, will not attempt installation.
     #
-    opencv_install: False
+    opencv_install: True
     # Optionally set up a trigger, uncomment to define
     # triggers:
     #   # triggers may contain the following keys
