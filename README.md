@@ -24,6 +24,10 @@ python3 home-alert.py -c /path/to/config/file
 ansible-playbook -i ./ansible/hosts ./ansible/playbook.yml
 ```
 
+Python modules needed:
+* Jinja2
+* pyyaml
+
 ### Hardware
 
 Has been tested with Logitech USB webcams. Refer to this list and opt for a camera that works fine without a powered usb hub.
