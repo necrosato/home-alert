@@ -91,6 +91,11 @@ def create_triggers(home_alert_node, control_server, wifi):
                 TRIGGER_TYPES[trigger_type](home_alert_node, control_server, wifi)
 
 
+def run_ansible_playbook(inventory, playbook):
+    ''' Run ansible-playbook given paths to an inventory file and playbook '''
+    subprocess.check_call(['ansible-playbook', '-i', inventory, playbook])
+
+
 def main():
     parser = argparse.ArgumentParser(description='Home Alert installation script.')
     parser.add_argument('-c', '--config', type=str, required=True,
@@ -156,6 +161,8 @@ def main():
     inventory_path = os.path.join(REPO_PATH, 'ansible/hosts')
     with open(inventory_path, 'w') as f:
         f.write(inventory)
+    # Run ansible playbook
+    run_ansible_playbook(inventory_path, playbook_path)
 
     
 if __name__ == '__main__':

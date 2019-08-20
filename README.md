@@ -19,8 +19,7 @@ To install the home alert security system software on your own hosts, first copy
 git clone https://github.com/necrosato/home-alert /tmp/home-alert
 cd /tmp/home-alert
 # Copy and modify config file ...
-python3 home-alert.py -c /path/to/config/file
-ansible-playbook -i ./ansible/hosts ./ansible/playbook.yml
+python3 install.py -c /path/to/config/file
 ```
 
 ### Hardware
