@@ -22,6 +22,10 @@ cd /tmp/home-alert
 python3 install.py -c /path/to/config/file
 ```
 
+Python modules needed to create playbook:
+* Jinja2
+* pyyaml
+
 ### Hardware
 
 Has been tested with Logitech USB webcams. Refer to this list and opt for a camera that works fine without a powered usb hub.

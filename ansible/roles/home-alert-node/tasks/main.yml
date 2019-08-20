@@ -31,38 +31,12 @@
 
 # OPENCV
 
-- name: opencv for stretch apt
-  apt:
-    name:
-      # openCV devepencies
-      - libopencv-dev
-      - libatlas3-base
-      - libjasper-dev
-      - libgstreamer1.0-dev
-      # - libqtgstreamer-dev
-    update_cache: yes
-  when: home_alert_node.opencv_install == "stretch"
-
-- name: opencv for stretch pip
-  pip:
-    name:
-      # This one takes a long time > 10 mins
-      - opencv-python
-    state: latest
-    executable: /usr/local/bin/pip3
-  when: home_alert_node.opencv_install == "stretch"
-
 - name: opencv via apt
   apt:
     name:
       - python3-opencv
     update_cache: yes
-  when: home_alert_node.opencv_install == "apt"
-
-# Better have game of thrones queued up, cuz this could take hours.
-- name: opencv via source
-  script: install_opencv.sh
-  when: home_alert_node.opencv_install == "source"
+  when: home_alert_node.opencv_install == True
 
 # END OPENCV
 
