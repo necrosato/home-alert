@@ -20,7 +20,6 @@ git clone https://github.com/necrosato/home-alert /tmp/home-alert
 cd /tmp/home-alert
 # Copy and modify config file ...
 python3 install.py -c /path/to/config/file
-ansible-playbook -i ./ansible/hosts ./ansible/playbook.yml
 ```
 
 ### Hardware

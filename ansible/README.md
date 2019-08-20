@@ -8,12 +8,3 @@ Note that all target hosts must have passwordless sudo set up:
 
 Ensure that Ansible is installed on all target hosts:
 * `sudo apt-get install ansible`
-
-To run the playbook over ssh:
-```
-ansible-playbook playbook.yml -i hosts --key-file $PATH_TO_KEY_FILE
-```
-or with password login
-```
-ansible-playbook playbook.yml -i hosts --ask-pass
-```
