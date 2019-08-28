@@ -91,23 +91,28 @@ def create_triggers(home_alert_node, control_server, wifi):
                 TRIGGER_TYPES[trigger_type](home_alert_node, control_server, wifi)
 
 
-def run_ansible_playbook(inventory, playbook, dry_run):
+def run_ansible_playbook(inventory, playbook, args):
     ''' Run ansible-playbook given paths to an inventory file and playbook '''
     ansible_cmd = ['ansible-playbook', '-i', inventory, playbook]
-    if dry_run:
+    if args.dry_run:
         ansible_cmd.append('--check')
+    if args.ask_sudo_pass:
+        ansible_cmd.append('--ask-become-pass')
     subprocess.check_call(ansible_cmd)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Home Alert installation script.')
     parser.add_argument('-c', '--config', type=str, required=True,
-                         help='Path to a home alert config file.')
+                        help='Path to a home alert config file.')
     parser.add_argument('-d', '--dry_run', default=False, action='store_true',
                         help='Do not actually install on target hosts, '
                              'Generates all resources needed to run the '
                              'ansible playbook for installation.')
-    #parser.add_argument('-')
+    parser.add_argument('--ask_sudo_pass', default=False, action='store_true',
+                        help='Ask for the sudo password on remote machines. '
+                             'Used if an installation target host cannot '
+                             'execute passwordless sudo as the user provided.')
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config, 'r'))
@@ -170,7 +175,7 @@ def main():
     with open(inventory_path, 'w') as f:
         f.write(inventory)
     # Run ansible playbook
-    run_ansible_playbook(inventory_path, playbook_path, args.dry_run)
+    run_ansible_playbook(inventory_path, playbook_path, args)
 
     
 if __name__ == '__main__':

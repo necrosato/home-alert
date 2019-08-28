@@ -9,8 +9,8 @@ Some steps must be taken on each host that is going to have home alert software 
  * `$ sudo usermod -aG sudo user`
  * Add the line `user ALL=(ALL) NOPASSWD: ALL` to /etc/sudoers
 2. Ensure that the host used to deploy the installation can ssh into each of the users of the target hosts via ssh keys.
-3. Install ansible
- * `$ sudo apt-get install ansible`
+3. Install ansible and python
+ * `$ sudo apt-get install ansible python`
 
 ## Installation
 
@@ -25,6 +25,14 @@ python3 install.py -c /path/to/config/file
 Python modules needed to create playbook:
 * Jinja2
 * pyyaml
+
+### Dry Run
+
+It is possible to execute a dry run installation with the `--dry_run` flag of the install script.
+All remote hosts must have the `python-setuptools` and `python-apt` packages installed.
+```
+$ sudo apt-get isntall python3-setuptools python-apt
+```
 
 ### Hardware
 
