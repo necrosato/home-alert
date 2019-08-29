@@ -31,7 +31,7 @@ Python modules needed to create playbook:
 It is possible to execute a dry run installation with the `--dry_run` flag of the install script.
 All remote hosts must have the `python-setuptools` and `python-apt` packages installed.
 ```
-$ sudo apt-get isntall python3-setuptools python-apt
+$ sudo apt-get install python3-setuptools python-apt
 ```
 
 ### Hardware
