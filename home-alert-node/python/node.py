@@ -26,6 +26,7 @@ def main():
     video_height = config['home_alert_node']['video_height']
     camera = HomeAlertCamera(video_device, video_width, video_height)
 
+    logger.info("Logging into smtp server")
     smtp_info = config['smtp_info']
     notify_emails = config['notify_emails']
     s3_bucket = None if 's3_upload_bucket' not in config else config['s3_upload_bucket']
