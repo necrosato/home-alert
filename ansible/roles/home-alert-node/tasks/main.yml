@@ -29,16 +29,12 @@
     state: latest
     executable: /usr/local/bin/pip3
 
-# OPENCV
-
 - name: opencv via apt
   apt:
     name:
       - python3-opencv
     update_cache: yes
   when: home_alert_node.opencv_install == True
-
-# END OPENCV
 
 - name: create home alert directory
   file:
