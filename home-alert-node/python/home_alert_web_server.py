@@ -11,6 +11,7 @@ import threading
 import home_alert_logging
 from home_alert_camera import HomeAlertCamera
 import aws_utils
+import pprint
 
 # TODO: Pull this out and pass to node
 NODE_DIR = '/home/home-alert/home-alert/'
@@ -26,12 +27,25 @@ class EndpointAction:
     def __call__(self, *args):
         return self.action()
 
+class LoggingMiddleware(object):
+    def __init__(self, app):
+        self._app = app
+
+    def __call__(self, environ, resp):
+        errorlog = environ['wsgi.errors']
+        pprint.pprint(('REQUEST', environ), stream=errorlog)
+
+        def log_response(status, headers, *args):
+            pprint.pprint(('RESPONSE', status, headers), stream=errorlog)
+            return resp(status, headers, *args)
+
+        return self._app(environ, log_response)
 
 class HomeAlertWebServer:
     '''
     Class holding a flask app and smtp server
     '''
-    def __init__(self, location, smtp_info, camera, notify_emails, s3_bucket = None):
+    def __init__(self, location, smtp_info, camera, notify_emails, http_logging = False, s3_bucket = None):
         '''
         location - string
         smtp_info - path to yaml file
@@ -49,6 +63,8 @@ class HomeAlertWebServer:
         self.smtp_connect()
         self.logger.info("Creating Web Server")
         self.app = Flask('Home Alert Node - ' + self.location)
+        if http_logging:
+            self.app.wsgi_app = LoggingMiddleware(self.app.wsgi_app)
 
         # Add endpoints
         self.add_endpoint(endpoint='/',
