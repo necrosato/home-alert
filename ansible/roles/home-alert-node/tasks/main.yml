@@ -13,6 +13,7 @@
       - vim
       - git
       - python3
+      - python-setuptools
       - cron
     update_cache: yes
 
