@@ -33,6 +33,10 @@ All remote hosts must have the `python-setuptools` and `python-apt` packages ins
 ```
 $ sudo apt-get install python3-setuptools python-apt
 ```
+### Debug
+
+Use the `--debug` flag when running the installation script to enable connection debugging
+and show full error tracebacks of the ansible-playbook run.
 
 ### Hardware
 

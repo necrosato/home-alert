@@ -98,6 +98,8 @@ def run_ansible_playbook(inventory, playbook, args):
         ansible_cmd.append('--check')
     if args.ask_sudo_pass:
         ansible_cmd.append('--ask-become-pass')
+    if args.debug:
+        ansible_cmd.append('-vvv')
     subprocess.check_call(ansible_cmd)
 
 
@@ -113,6 +115,8 @@ def main():
                         help='Ask for the sudo password on remote machines. '
                              'Used if an installation target host cannot '
                              'execute passwordless sudo as the user provided.')
+    parser.add_argument('--debug', default=False, action='store_true',
+                        help='Enables connection debugging and shows full error tracebacks.')
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config, 'r'))
