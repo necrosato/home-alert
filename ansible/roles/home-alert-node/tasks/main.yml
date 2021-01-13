@@ -27,15 +27,9 @@
     name:
       - flask
       - pytz
+      - ffmpeg-python
     state: latest
     executable: /usr/local/bin/pip3
-
-- name: opencv via apt
-  apt:
-    name:
-      - python3-opencv
-    update_cache: yes
-  when: home_alert_node.opencv_install == True
 
 - name: create home alert directory
   file:

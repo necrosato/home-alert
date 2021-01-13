@@ -1,5 +1,5 @@
 import os
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template, send_file
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -15,6 +15,8 @@ import pprint
 
 # TODO: Pull this out and pass to node
 NODE_DIR = '/home/home-alert/home-alert/'
+VIDEO_DIR = os.path.join(NODE_DIR, 'video')
+TEMPLATE_DIR = os.path.join(NODE_DIR, 'python/templates')
 
 class EndpointAction:
     '''
@@ -24,8 +26,8 @@ class EndpointAction:
         self.action = action
 
 
-    def __call__(self, *args):
-        return self.action()
+    def __call__(self, **args):
+        return self.action(**args)
 
 class LoggingMiddleware(object):
     def __init__(self, app):
@@ -35,9 +37,9 @@ class LoggingMiddleware(object):
         errorlog = environ['wsgi.errors']
         pprint.pprint(('REQUEST', environ), stream=errorlog)
 
-        def log_response(status, headers, *args):
+        def log_response(status, headers, **args):
             pprint.pprint(('RESPONSE', status, headers), stream=errorlog)
-            return resp(status, headers, *args)
+            return resp(status, headers, **args)
 
         return self._app(environ, log_response)
 
@@ -55,14 +57,14 @@ class HomeAlertWebServer:
         self.location = location
         self.smtp_info = smtp_info
         self.camera = camera
+        self.camera_handler_thread = threading.Thread(target=self.camera_handler)
+        self.camera_handler_thread.start()
         self.notify_emails = notify_emails
         self.s3_bucket = s3_bucket
         self.armed = True
 
-        self.logger.info("Connecting to mail server")
-        self.smtp_connect()
         self.logger.info("Creating Web Server")
-        self.app = Flask('Home Alert Node - ' + self.location)
+        self.app = Flask('Home Alert Node - ' + self.location, template_folder=TEMPLATE_DIR)
         if http_logging:
             self.app.wsgi_app = LoggingMiddleware(self.app.wsgi_app)
 
@@ -79,12 +81,29 @@ class HomeAlertWebServer:
                 endpoint_name='disarm', handler=self.disarm)
         self.add_endpoint(endpoint='/stream',
                 endpoint_name='stream', handler=self.stream)
+        self.add_endpoint(endpoint='/video',
+                endpoint_name='video_base', handler=self.video, defaults={'subpath':''})
+        self.add_endpoint(endpoint='/video/<path:subpath>',
+                endpoint_name='video', handler=self.video)
 
+
+    def camera_handler(self):
+        interval = 60
+        while True:
+            dt = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
+            suffix = str(dt.date()) + '/' + str(dt.time())
+            video_dir = os.path.join(VIDEO_DIR, suffix)
+            if not os.path.exists(video_dir):
+                os.makedirs(video_dir)
+            video_name = 'video.m3u8'
+            self.camera.capture(os.path.join(video_dir, video_name), interval)
+ 
 
     def smtp_connect(self):
         '''
         Opens/refreshes an smtp connection
         '''
+        self.logger.info("Connecting to mail server")
         self.smtp = smtplib.SMTP(host=self.smtp_info['host'], port=self.smtp_info['port'])
         self.smtp.starttls()
         self.smtp.login(self.smtp_info['user_address'], self.smtp_info['user_pass'])
@@ -134,42 +153,22 @@ class HomeAlertWebServer:
 
     def trigger(self):
         '''
-        This function handles a trigger request. It captures images from camera.
         If armed, sends emails to notify list.
         Returns a message containing the request time.
         '''
         dt = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
         response_str = self.location + ' recieved trigger: ' + str(dt)
 
-        # Save some photos 
-        photo_suffix = '/photos/' + str(dt.date()) + '/' + str(dt.time())
-        photo_dir = NODE_DIR + photo_suffix
-        if not os.path.exists(photo_dir):
-            os.makedirs(photo_dir)
-        self.camera.write_video_frames(photo_dir, 'photo_', 5, 2, 1)
-        photos = [photo_dir + '/photo_00.jpeg',
-                  photo_dir + '/photo_02.jpeg',
-                  photo_dir + '/photo_04.jpeg']
-
         # if armed, alert
         if self.armed:
-            # TODO: Make this a function
             subject = 'Home Alert: ' + self.location
-            msg = self.get_mime_message(subject, response_str, photos)
+            msg = self.get_mime_message(subject, response_str, [])
             # Might need to catch an exception to refresh the connection
             try:
                 self.smtp.send_message(msg)
             except:
                 self.smtp_connect()
                 self.smtp.send_message(msg)
-
-        # Move photos to s3 if a bucket is defined
-        # Do this in another thread
-        if self.s3_bucket is not None:
-            dest = self.s3_bucket + self.location + photo_suffix
-            s3_thread = threading.Thread(target=aws_utils.s3_cp,
-                                         args=[photo_dir, dest])
-            s3_thread.start()
 
         return response_str
 
@@ -184,8 +183,27 @@ class HomeAlertWebServer:
 
 
     def stream(self):
-        return Response(self.camera.gen_video_stream(),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
+        current_date = sorted(os.listdir(VIDEO_DIR))[-1]
+        current_time = sorted(os.listdir(os.path.join(VIDEO_DIR, current_date)))[-1]
+        return render_template('player.html', source=os.path.join('video', current_date, current_time, 'video.m3u8'))
+
+
+    def video(self, subpath):
+        arg_path = subpath.strip('/')
+        abs_path = os.path.join(VIDEO_DIR, arg_path)
+        self.logger.info("getting contents of " + abs_path)
+
+        # Return 404 if path doesn't exist
+        if not os.path.exists(abs_path):
+            return abort(404)
+
+        # Check if path is a file and serve
+        if os.path.isfile(abs_path):
+            return send_file(abs_path)
+
+        # Show directory contents
+        files = reversed(sorted(os.listdir(abs_path)))
+        return render_template('files.html', files=files, join=os.path.join)
 
 
     def run(self, port):
@@ -195,10 +213,10 @@ class HomeAlertWebServer:
         self.app.run(debug=False, host='0.0.0.0', port=port)
 
 
-    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
+    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, **options):
         '''
         Register an endpoint function to the flask app
         '''
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
+        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler), **options)
 
 

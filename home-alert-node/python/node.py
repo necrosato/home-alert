@@ -17,8 +17,6 @@ def main():
     logger = home_alert_logging.GetHomeAlertLogger()
     logger.info("Loading config file")
     config = yaml.safe_load(open(args.config, 'r'))
-    # TODO: Don't bother pulling these out, pass dict to HomeAlertWebServer
-    location = config['home_alert_node']['location']
 
     logger.info("Creating HomeAlertCamera")
     video_device = config['home_alert_node']['video_device']
@@ -32,6 +30,7 @@ def main():
     s3_bucket = None if 's3_upload_bucket' not in config else config['s3_upload_bucket']
 
     logger.info("Creating HomeAlertWebServer")
+    location = config['home_alert_node']['location']
     home_alert = HomeAlertWebServer(location, smtp_info, camera, notify_emails, args.http_logging, s3_bucket)
     # Start web server
     logger.info("Running Web Server")
