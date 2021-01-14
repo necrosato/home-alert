@@ -177,9 +177,7 @@ class HomeAlertWebServer:
         '''
         Returns node location and arm status:
         '''
-        response_str = 'Location: ' + self.location + '<br>'
-        response_str += 'Armed: ' + str(self.armed)
-        return response_str
+        return render_template('index.html', location=self.location, armed=str(self.armed))
 
 
     def stream(self):
