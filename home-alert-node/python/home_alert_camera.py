@@ -23,12 +23,15 @@ class HomeAlertCamera:
                   t=seconds
                               )
 
+        segment_time = 5
+        list_size = seconds // segment_time
         stream = ffmpeg.output(stream,
                                output_path,
                                format='hls',
-                               hls_time=5,
+                               hls_time=segment_time,
+                               hls_list_size=list_size, # keep all segments in manifest, val > 0 will cause, # keep all segments in manifest, val > 0 will cause 
                                pix_fmt='yuv420p',
-                               g=15,
+                               g=30,
                                sc_threshold=0
                                )
         ffmpeg.run(stream)

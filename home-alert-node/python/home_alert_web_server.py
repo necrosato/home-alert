@@ -88,7 +88,7 @@ class HomeAlertWebServer:
 
 
     def camera_handler(self):
-        interval = 60
+        interval = 60 * 5
         while True:
             dt = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
             suffix = str(dt.date()) + '/' + str(dt.time())
@@ -217,6 +217,6 @@ class HomeAlertWebServer:
         '''
         Register an endpoint function to the flask app
         '''
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler), **options)
+        self.app.add_url_rule('/' + self.location + '/' + endpoint, endpoint_name, EndpointAction(handler), **options)
 
 
