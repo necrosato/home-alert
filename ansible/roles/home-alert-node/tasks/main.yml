@@ -15,6 +15,7 @@
       - python3
       - python-setuptools
       - cron
+      - ffmpeg
     update_cache: yes
 
 # Have to use get-pip.py as apt's version throws errors.

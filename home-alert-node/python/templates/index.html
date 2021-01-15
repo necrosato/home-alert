@@ -8,6 +8,6 @@
   <h1>Home Alert</h1>
 <p>Location: {{ location }}</p>
 <p>Armed: {{ armed }}</p>
-<a href="video">video</a><br/>
-<a href="stream">live stream</a>
+<a href="{{ (request.path + '/' if request.path != '/' else '') }}video">video</a><br/>
+<a href="{{ (request.path + '/' if request.path != '/' else '') }}stream">live stream</a><br/>
 </body>

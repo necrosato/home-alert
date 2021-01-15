@@ -19,10 +19,7 @@ def main():
     config = yaml.safe_load(open(args.config, 'r'))
 
     logger.info("Creating HomeAlertCamera")
-    video_device = config['home_alert_node']['video_device']
-    video_width = config['home_alert_node']['video_width']
-    video_height = config['home_alert_node']['video_height']
-    camera = HomeAlertCamera(video_device, video_width, video_height)
+    camera = HomeAlertCamera(config['home_alert_node']['video_options'])
 
     logger.info("Logging into smtp server")
     smtp_info = config['smtp_info']

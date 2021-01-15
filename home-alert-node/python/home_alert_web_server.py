@@ -88,7 +88,6 @@ class HomeAlertWebServer:
 
 
     def camera_handler(self):
-        interval = 60 * 5
         while True:
             dt = datetime.datetime.now(pytz.timezone('America/Los_Angeles'))
             suffix = str(dt.date()) + '/' + str(dt.time())
@@ -96,7 +95,7 @@ class HomeAlertWebServer:
             if not os.path.exists(video_dir):
                 os.makedirs(video_dir)
             video_name = 'video.m3u8'
-            self.camera.capture(os.path.join(video_dir, video_name), interval)
+            self.camera.capture(os.path.join(video_dir, video_name))
  
 
     def smtp_connect(self):

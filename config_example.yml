@@ -38,9 +38,14 @@ home_alert_nodes:
     cam_type: "pi"
 
     # The video device to use for video capture
-    video_device: "/dev/video0"
-    video_width: 1280
-    video_height: 720
+    video_options:
+      source: "/dev/video0"
+      width: 1280
+      height: 720
+      input_format: "mjpeg"
+      framerate: 30
+      hls_segment_time: 5
+      duration: 600
     # Optionally set up a trigger, uncomment to define
     # triggers:
     #   # triggers may contain the following keys
@@ -49,7 +54,7 @@ home_alert_nodes:
     #     # The digital pin to use on the board
     #     pin: "D6"
 
-# Email to send notifications
+# Email to send notifications from
 smtp_info:
   host: "smtp.gmail.com"
   port: 587
