@@ -15,6 +15,7 @@
       - python3
       - python-setuptools
       - cron
+      - ffmpeg
     update_cache: yes
 
 # Have to use get-pip.py as apt's version throws errors.
@@ -27,15 +28,9 @@
     name:
       - flask
       - pytz
+      - ffmpeg-python
     state: latest
     executable: /usr/local/bin/pip3
-
-- name: opencv via apt
-  apt:
-    name:
-      - python3-opencv
-    update_cache: yes
-  when: home_alert_node.opencv_install == True
 
 - name: create home alert directory
   file:
@@ -44,9 +39,9 @@
     owner: home-alert
     group: home-alert
 
-- name: create photos directory
+- name: create video directory
   file:
-    path: "{{ photos_dir }}"
+    path: "{{ video_dir }}"
     state: directory
     owner: home-alert
     group: home-alert
@@ -90,5 +85,5 @@
     minute: "0"
     hour: "2"
     user: home-alert
-    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ photos_dir }} -n 7"
+    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 3"
 
