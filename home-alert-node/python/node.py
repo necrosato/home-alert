@@ -18,8 +18,12 @@ def main():
     logger.info("Loading config file")
     config = yaml.safe_load(open(args.config, 'r'))
 
+    audio_options = {}
+    if 'audio_options' in config['home_alert_node']:
+        audio_options = config['home_alert_node']['audio_options']
+
     logger.info("Creating HomeAlertCamera")
-    camera = HomeAlertCamera(config['home_alert_node']['video_options'])
+    camera = HomeAlertCamera(config['home_alert_node']['video_options'], audio_options)
 
     logger.info("Logging into smtp server")
     smtp_info = config['smtp_info']
