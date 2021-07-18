@@ -49,6 +49,8 @@ home_alert_nodes:
     audio_options:
       source: "hw:1"
       channels: 2
+      bitrate: 128
+
     # Optionally set up a trigger, uncomment to define
     # triggers:
     #   # triggers may contain the following keys

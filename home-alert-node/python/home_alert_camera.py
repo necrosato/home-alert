@@ -16,6 +16,7 @@ class HomeAlertCamera:
         if duration is None:
             duration = self.video_options['duration']
         streams = []
+        bitrates = {}
         streams.append(ffmpeg.input(self.video_options['source'], 
                               format='v4l2',
                               thread_queue_size=1024,
@@ -24,13 +25,14 @@ class HomeAlertCamera:
                               s='{}x{}'.format(self.video_options['width'], self.video_options['height']),
                               t=duration
                               ))
-        if ('source' in self.audio_options):
+        if 'source' in self.audio_options:
             streams.append(ffmpeg.input(self.audio_options['source'], 
                                   format='alsa',
                                   channels=self.audio_options['channels'],
                                   thread_queue_size=1024,
                                   t=duration
                                   ))
+            bitrates['audio_bitrate']=self.audio_options['bitrate']
 
 
         list_size = duration // self.video_options['hls_segment_time']
@@ -42,7 +44,8 @@ class HomeAlertCamera:
                                pix_fmt='yuv420p',
                                acodec='aac',
                                g=self.video_options['framerate'],
-                               sc_threshold=0
+                               sc_threshold=0,
+                               **bitrates
                                )
         ffmpeg.run(stream)
 
