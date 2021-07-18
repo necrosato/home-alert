@@ -29,7 +29,7 @@
 - name: copy aws credentials
   template:
     src: "credentials.j2"
-    dest: "/home/main-server/.aws/credentials"
+    dest: "/home/home-alert/.aws/credentials"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0400

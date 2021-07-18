@@ -5,9 +5,9 @@
   </head>
   <body>
     <h1>Home Alert Control Server<br></h1>
-    <p>Installed Main Servers:<br></p>
-  {% for main_server in main_servers %}
-    <a href="/{{ main_server.location }}">{{ main_server.location }}</a><br>
+    <p>Installed Home Alert Nodes:<br></p>
+  {% for home_alert_node in home_alert_nodes %}
+    <a href="/{{ home_alert_node.location }}">{{ home_alert_node.location }}</a><br>
   {% endfor %}
   </body>
 </html>

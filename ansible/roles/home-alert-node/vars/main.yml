@@ -1,0 +1,2 @@
+home_alert_dir: /home/home-alert/home-alert/
+video_dir: "{{ home_alert_dir }}/video/"

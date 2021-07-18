@@ -1,0 +1,126 @@
+---
+- name: create the home alert user
+  user:
+    name: home-alert
+    groups:
+      - audio
+      - video
+    shell: /bin/bash
+
+- name: install home alert node apt dependencies
+  apt:
+    name:
+      - vim
+      - git
+      - python3
+      - python-setuptools
+      - cron
+      - ffmpeg
+      - iptables-persistent
+    update_cache: yes
+
+- name: enable sshd 
+  ansible.builtin.systemd:
+    state: started
+    name: ssh 
+    enabled: yes
+  become: yes
+
+- name: enable netfilter-persistent service 
+  ansible.builtin.systemd:
+    state: started
+    name: netfilter-persistent 
+    enabled: yes
+  become: yes 
+
+# Have to use get-pip.py as apt's version throws errors.
+# See https://stackoverflow.com/questions/37495375/python-pip-install-throws-typeerror-unsupported-operand-types-for-retry
+- name: install pip using get-pip.py
+  script: install_pip.sh
+
+- name: install home alert node python dependencies
+  pip:
+    name:
+      - flask
+      - pytz
+      - ffmpeg-python
+    state: latest
+    executable: /usr/local/bin/pip3
+
+- name: create home alert directory
+  file:
+    path: "{{ home_alert_dir }}"
+    state: directory
+    owner: home-alert
+    group: home-alert
+
+- name: create video directory
+  file:
+    path: "{{ video_dir }}"
+    state: directory
+    owner: home-alert
+    group: home-alert
+
+- name: copy home alert node python code
+  copy:
+    src: "{{ playbook_dir }}/../home-alert-node/python/"
+    dest: "{{ home_alert_dir }}/python/"
+    owner: home-alert
+    group: home-alert
+  notify:
+    - restart home-alert service
+
+- name: copy location node config to home alert directory
+  copy:
+    src: "{{ playbook_dir }}/vars/{{ home_alert_node.location }}.yml"
+    dest: "/home/home-alert/home-alert/config.yml"
+    owner: home-alert
+    group: home-alert
+    mode: 0600
+  notify:
+    - restart home-alert service
+
+- name: copy home-alert systemd service unit file
+  copy:
+    src: "home-alert.service"
+    dest: "/etc/systemd/system/home-alert.service"
+  notify:
+    - restart home-alert service
+
+- name: copy cleanup script to home alert directory
+  copy:
+    src: "clean_storage.sh"
+    dest: "{{ home_alert_dir }}/clean_storage.sh"
+    owner: home-alert
+    group: home-alert
+    mode: 0755
+
+- name: cron job to run clean_storage.sh every night
+  cron:
+    name: "Cron job for cleaning storage"
+    minute: "0"
+    hour: "2"
+    user: home-alert
+    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 3"
+
+- name: allow traffic from control server to web server 
+  ansible.builtin.iptables:
+    chain: INPUT
+    source: "{{ control_server }}"
+    destination_port: "{{ home_alert_node.server_port }}"
+    protocol: tcp
+    jump: ACCEPT
+  become: yes
+
+- name: block all connections to web server
+  ansible.builtin.iptables:
+    chain: INPUT
+    source: 0.0.0.0/0
+    destination_port: "{{ home_alert_node.server_port }}"
+    protocol: tcp
+    jump: DROP
+  become: yes
+
+- name: persist iptables rules
+  shell: "iptables-save > /etc/iptables/rules.v4"
+  become: yes
