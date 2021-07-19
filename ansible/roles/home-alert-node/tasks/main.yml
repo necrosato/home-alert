@@ -72,7 +72,7 @@
 
 - name: copy location node config to home alert directory
   copy:
-    src: "{{ playbook_dir }}/vars/{{ home_alert_node.location }}.yml"
+    src: "{{ playbook_dir }}/group_vars/{{ home_alert_node.location }}.yml"
     dest: "/home/home-alert/home-alert/config.yml"
     owner: home-alert
     group: home-alert

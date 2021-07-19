@@ -16,7 +16,7 @@ def create_control_server(config_path):
     Create control play for ansible playbook
     '''
     control_server = {}
-    control_server['hosts'] = 'control_server'
+    control_server['hosts'] = [ 'control_server' ]
     control_server['become'] = True
     control_server['vars_files'] = [ config_path ]
     control_server['roles'] = [ 'control-server' ]
@@ -146,28 +146,41 @@ def main():
         home_alert_node_config['smtp_info'] = config['smtp_info']
         home_alert_node_config['home_alert_node'] = home_alert_node
         home_alert_node_config['control_server'] = config['control_server']['address'] 
-        home_alert_node_config_path = os.path.join(REPO_PATH, 'ansible/vars/' + home_alert_node['location'] + '.yml')
+        home_alert_node_config_path = os.path.join(REPO_PATH, 'ansible/group_vars/' + home_alert_node['location'] + '.yml')
         if 'aws' in config:
             home_alert_node_config['s3_upload_bucket'] = config['aws']['s3_upload_bucket']
         yaml.dump(home_alert_node_config, open(home_alert_node_config_path, 'w'), default_flow_style=False)
 
         # Add home alert node play to playbook
         host = {}
-        host['hosts'] = home_alert_node['location']
+        host['hosts'] = [ home_alert_node['location'] ]
         host['become'] = True
-        host['vars_files'] = [ home_alert_node_config_path ]
         host['roles'] = [ 'home-alert-node' ]
-        if 'aws' in config:
-            host['vars_files'].append(aws_config_path)
-            host['roles'].append('aws')
-        # Check camera type
-        if home_alert_node['cam_type'] == "pi":
-            host['roles'].append('pi-camera')
         host['vars'] = { 'user': 'home-alert' }
+        if 'aws' in config:
+            host['vars_files'] = [ aws_config_path ]
+            host['roles'].append('aws')
         ansible_playbook.append(host)
         # Add home alert node to inventory
         inventory += '[{}]\n{} ansible_user={}\n'.format(
                 home_alert_node['location'], home_alert_node['address'], home_alert_node['user'])
+
+        # Check camera type
+        if home_alert_node['cam_type'] == "pi":
+            pihost = {}
+            pihost['hosts'] = [ home_alert_node['location'] ]
+            pihost['become'] = True
+            pihost['roles'] = [ 'pi-camera' ]
+            ansible_playbook.append(pihost)
+
+    roles_to_locations = {}
+    for play in ansible_playbook:
+        key = '-'.join(play['roles'])
+        if key not in roles_to_locations:
+            roles_to_locations[key] = play
+        else:
+            roles_to_locations[key]['hosts'] += play['hosts']
+    ansible_playbook = [roles_to_locations[k] for k in roles_to_locations]
 
     # Generate .htpasswd file for control server
     htpasswd_path = os.path.join(REPO_PATH, 'ansible/roles/control-server/files/htpasswd')
