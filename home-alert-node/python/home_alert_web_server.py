@@ -17,6 +17,7 @@ import pprint
 NODE_DIR = '/home/home-alert/home-alert/'
 VIDEO_DIR = os.path.join(NODE_DIR, 'video')
 TEMPLATE_DIR = os.path.join(NODE_DIR, 'python/templates')
+HLS_MANIFEST='video.m3u8'
 
 class EndpointAction:
     '''
@@ -94,7 +95,7 @@ class HomeAlertWebServer:
             video_dir = os.path.join(VIDEO_DIR, suffix)
             if not os.path.exists(video_dir):
                 os.makedirs(video_dir)
-            video_name = 'video.m3u8'
+            video_name = HLS_MANIFEST
             self.camera.capture(os.path.join(video_dir, video_name))
  
 
@@ -182,7 +183,7 @@ class HomeAlertWebServer:
     def stream(self):
         current_date = sorted(os.listdir(VIDEO_DIR))[-1]
         current_time = sorted(os.listdir(os.path.join(VIDEO_DIR, current_date)))[-1]
-        return render_template('player.html', source=os.path.join('video', current_date, current_time, 'video.m3u8'))
+        return render_template('player.html', source=os.path.join('video', current_date, current_time, HLS_MANIFEST))
 
 
     def video(self, subpath):
@@ -198,9 +199,17 @@ class HomeAlertWebServer:
         if os.path.isfile(abs_path):
             return send_file(abs_path)
 
+        # check if video in path and serve
+        files = []
+        for f in reversed(sorted(os.listdir(abs_path))):
+            vpath = os.path.join(abs_path, f, HLS_MANIFEST)
+            if os.path.isfile(vpath):
+                files.append(os.path.join(f, HLS_MANIFEST))
+            else:
+                files.append(f)
+
         # Show directory contents
-        files = reversed(sorted(os.listdir(abs_path)))
-        return render_template('files.html', files=files, join=os.path.join)
+        return render_template('files.html', files=files)
 
 
     def run(self, port):
