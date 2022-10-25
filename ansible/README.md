@@ -1,23 +1,10 @@
 # Ansible Configuration
 
-All of the linux nodes in the home alert system (i.e. main server, streaming server, etc), are configured using ansible.
+All of the linux nodes in the home alert system (i.e. control server, home alert nodes, etc), are configured using ansible.
 
-Note that all target hosts must have passworldless sudo set up:
-```
-sudo usermod -aG sudo user
-user ALL=(ALL) NOPASSWD: ALL
-```
+Note that all target hosts must have passwordless sudo set up:
+* `$ sudo usermod -aG sudo user`
+* Add the line `user ALL=(ALL) NOPASSWD: ALL` to /etc/sudoers
 
-First on the target hosts:
-```
-sudo apt-get intall ansible
-```
-
-To run the playbook over ssh:
-```
-ansible-playbook playbook.yml -i hosts --key-file $PATH_TO_KEY_FILE
-```
-or with password login
-```
-ansible-playbook playbook.yml -i hosts --ask-pass
-```
+Ensure that Ansible is installed on all target hosts:
+* `sudo apt-get install ansible`

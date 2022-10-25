@@ -20,14 +20,14 @@ control_server:
 notify_emails:
   - "example@gmail.com"
 
-# Main Server Definitions
-main_servers:
-  # Each element in this list defines a main server. Add elements to define multiple main servers.
-  # Location is an arbitrary identifier grouping a main server and trigger
+# Home Alert Node Definitions
+home_alert_nodes:
+  # Each element in this list defines a home alert node. Add elements to define multiple nodes.
+  # Location is an arbitrary identifier grouping a node and trigger
   - location: "location"
-    # Address of main server target host
+    # Address of home alert node target host
     address: "10.0.0.138"
-    # Port to run main server application
+    # Port to run home alert application
     server_port: 5000
     # Username of user with passwordless sudo, for ansible
     user: "pi"
@@ -38,27 +38,28 @@ main_servers:
     cam_type: "pi"
 
     # The video device to use for video capture
-    video_device: "/dev/video0"
-    video_width: 1280
-    video_height: 720
-    # opencv_install may be one of
-    # apt: install opencv python3 bindings using apt, not available on all distributions.
-    # source: Download and compile opencv and python3 bindings, can take **hours**.
-    # stretch: Use a combination of apt and pip to get working python3 bindings on raspian stretch
-    # skip: you have installed opencv on your own, do not attempt any installation method.
-    #
-    # If using source on a raspberry pi, you must have a swap partition set up.
-    # Otherwise you will risk running out of ram during compilation.
-    opencv_install: "skip"
+    video_options:
+      source: "/dev/video0"
+      width: 1280
+      height: 720
+      input_format: "mjpeg"
+      framerate: 30
+      hls_segment_time: 5
+      duration: 600
+    audio_options:
+      source: "hw:1"
+      channels: 2
+      bitrate: 128
+
     # Optionally set up a trigger, uncomment to define
     # triggers:
     #   # triggers may contain the following keys
-    #   # esp8266: Generate an arduino sketch for this main server location. Web credentials will be generated.
+    #   # esp8266: Generate an arduino sketch for this node location. Web credentials will be generated.
     #   esp8266:
     #     # The digital pin to use on the board
     #     pin: "D6"
 
-# Email to send notifications
+# Email to send notifications from
 smtp_info:
   host: "smtp.gmail.com"
   port: 587

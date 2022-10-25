@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Home Alert - {{ location }}</title>
+</head>
+<body>
+  <h1>Home Alert</h1>
+<p>Location: {{ location }}</p>
+<p>Armed: {{ armed }}</p>
+<a href="{{ (request.path + '/' if request.path != '/' else '') }}video">video</a><br/>
+<a href="{{ (request.path + '/' if request.path != '/' else '') }}stream">live stream</a><br/>
+</body>

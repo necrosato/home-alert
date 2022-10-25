@@ -2,7 +2,7 @@
   lineinfile:
     path: /boot/config.txt 
     regexp: 'start_x'
-    line: 'start_x 1'
+    line: 'start_x=1'
   notify:
     - reboot pi
     - wait for reconnection after reboot
@@ -11,7 +11,7 @@
   lineinfile:
     path: /boot/config.txt 
     regexp: 'gpu_mem'
-    line: 'gpu_mem 128'
+    line: 'gpu_mem=128'
   notify:
     - reboot pi
     - wait for reconnection after reboot

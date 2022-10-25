@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Home Alert Control Server - All Streams</title>
+  </head>
+  <body>
+    <h1>Home Alert Control Server - All Streams<br></h1>
+  {% for home_alert_node in home_alert_nodes %}
+    <h2>{{ home_alert_node.location }}</h2><br/>
+    <iframe src="{{ home_alert_node.location }}/stream" width="{{ home_alert_node.video_options.width }}" height="{{ home_alert_node.video_options.height }}" id="{{ home_alert_node.location }}"></iframe>
+  {% endfor %}
+</html>
