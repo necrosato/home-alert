@@ -34,6 +34,14 @@
     group: root
     mode: 0644
 
+- name: copy all_streams.html from template
+  template:
+    src: all_streams.html.j2
+    dest: /var/www/html/all_streams.html
+    owner: root
+    group: root
+    mode: 0644
+
 - name: copy htpasswd file
   copy:
     src: htpasswd

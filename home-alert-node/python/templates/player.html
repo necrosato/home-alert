@@ -25,7 +25,7 @@ type="application/x-mpegURL">
 </video>
 <script src="https://unpkg.com/video.js/dist/video.js"></script>
 <script>
-var player = videojs('example-video');
+    var player = videojs('example-video', {autoplay: true, muted: true});
 player.play();
 </script>
 </body>

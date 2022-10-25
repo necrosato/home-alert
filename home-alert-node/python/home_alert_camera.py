@@ -1,4 +1,5 @@
 import ffmpeg
+import os
 
 class HomeAlertCamera:
     '''
@@ -47,5 +48,11 @@ class HomeAlertCamera:
                                sc_threshold=0,
                                **bitrates
                                )
-        ffmpeg.run(stream)
+        try:
+            ffmpeg.run(stream)
+        except Exception as e:
+            print('FFMPEG EXCEPTION!!!!!')
+            print(e)
+            os._exit(1)
+
 

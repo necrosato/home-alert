@@ -193,7 +193,7 @@ class HomeAlertWebServer:
 
         # Return 404 if path doesn't exist
         if not os.path.exists(abs_path):
-            return abort(404)
+            return 404
 
         # Check if path is a file and serve
         if os.path.isfile(abs_path):
