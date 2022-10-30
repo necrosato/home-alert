@@ -95,13 +95,16 @@
     group: home-alert
     mode: 0755
 
+- name: run cleanup script to free space if full
+  shell: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 2"
+
 - name: cron job to run clean_storage.sh every night
   cron:
     name: "Cron job for cleaning storage"
     minute: "0"
     hour: "2"
     user: home-alert
-    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 3"
+    job: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 2"
 
 - name: allow traffic from control server to web server 
   ansible.builtin.iptables:

@@ -18,14 +18,14 @@ class HomeAlertCamera:
             duration = self.video_options['duration']
         streams = []
         bitrates = {}
-        streams.append(ffmpeg.input(self.video_options['source'], 
+        streams.append(ffmpeg.filter(ffmpeg.input(self.video_options['source'], 
                               format='v4l2',
                               thread_queue_size=1024,
                               input_format=self.video_options['input_format'],
                               framerate=self.video_options['framerate'],
                               s='{}x{}'.format(self.video_options['width'], self.video_options['height']),
                               t=duration
-                              ))
+                              ), 'drawtext', text='%{localtime}', fontcolor='white', box=1, boxcolor='black@0.75'))
         if 'source' in self.audio_options:
             streams.append(ffmpeg.input(self.audio_options['source'], 
                                   format='alsa',

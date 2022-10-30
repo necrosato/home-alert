@@ -1,5 +1,5 @@
 import os
-from flask import Flask, Response, request, render_template, send_file
+from flask import Flask, Response, request, render_template, send_file, redirect
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -86,6 +86,8 @@ class HomeAlertWebServer:
                 endpoint_name='video_base', handler=self.video, defaults={'subpath':''})
         self.add_endpoint(endpoint='/video/<path:subpath>',
                 endpoint_name='video', handler=self.video)
+        self.add_endpoint(endpoint='/current_video',
+                endpoint_name='current_video', handler=self.current_video)
 
 
     def camera_handler(self):
@@ -189,11 +191,11 @@ class HomeAlertWebServer:
     def video(self, subpath):
         arg_path = subpath.strip('/')
         abs_path = os.path.join(VIDEO_DIR, arg_path)
-        self.logger.info("getting contents of " + abs_path)
+        self.logger.info("Looking for " + abs_path)
 
         # Return 404 if path doesn't exist
         if not os.path.exists(abs_path):
-            return 404
+            exit(1)
 
         # Check if path is a file and serve
         if os.path.isfile(abs_path):
@@ -211,6 +213,10 @@ class HomeAlertWebServer:
         # Show directory contents
         return render_template('files.html', files=files)
 
+    def current_video(self):
+        current_date = sorted(os.listdir(VIDEO_DIR))[-1]
+        current_time = sorted(os.listdir(os.path.join(VIDEO_DIR, current_date)))[-1]
+        return redirect(os.path.join('video', current_date, current_time, HLS_MANIFEST))
 
     def run(self, port):
         '''

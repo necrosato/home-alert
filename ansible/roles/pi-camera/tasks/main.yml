@@ -16,6 +16,15 @@
     - reboot pi
     - wait for reconnection after reboot
 
+- name: disable camera led
+  lineinfile:
+    path: /boot/config.txt 
+    regexp: 'disable_camera_led'
+    line: 'disable_camera_led=1'
+  notify:
+    - reboot pi
+    - wait for reconnection after reboot
+
 - name: load the bcm2835-v4l2 kernel module
   lineinfile:
     path: /etc/modules

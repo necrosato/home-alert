@@ -2,11 +2,19 @@
 <html>
   <head>
     <title>Home Alert Control Server - All Streams</title>
+    <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
   </head>
   <body>
     <h1>Home Alert Control Server - All Streams<br></h1>
   {% for home_alert_node in home_alert_nodes %}
-    <h2>{{ home_alert_node.location }}</h2><br/>
-    <iframe src="{{ home_alert_node.location }}/stream" width="{{ home_alert_node.video_options.width }}" height="{{ home_alert_node.video_options.height }}" id="{{ home_alert_node.location }}"></iframe>
+    <h2>{{ home_alert_node.location }}</h2>
+    <video id="{{ home_alert_node.location }}" class="video-js vjs-default-skin" controls>
+      <source src="{{ home_alert_node.location }}/current_video" type="application/x-mpegURL">
+    </video>
+    <script src="https://unpkg.com/video.js/dist/video.js"></script>
+    <script>
+        var player = videojs('{{ home_alert_node.location }}', {autoplay: true, muted: true});
+        player.play();
+    </script>
   {% endfor %}
 </html>
