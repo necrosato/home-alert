@@ -74,6 +74,8 @@ class HomeAlertWebServer:
                 endpoint_name='index', handler=self.index)
         self.add_endpoint(endpoint='/status',
                 endpoint_name='status', handler=self.status)
+        self.add_endpoint(endpoint='/restart',
+                endpoint_name='restart', handler=self.restart)
         self.add_endpoint(endpoint='/trigger',
                 endpoint_name='trigger', handler=self.trigger)
         self.add_endpoint(endpoint='/arm',
@@ -181,6 +183,8 @@ class HomeAlertWebServer:
         '''
         return render_template('index.html', location=self.location, armed=str(self.armed))
 
+    def restart(self):
+        os._exit(1)
 
     def stream(self):
         current_date = sorted(os.listdir(VIDEO_DIR))[-1]
@@ -195,7 +199,7 @@ class HomeAlertWebServer:
 
         # Return 404 if path doesn't exist
         if not os.path.exists(abs_path):
-            exit(1)
+            os._exit(1)
 
         # Check if path is a file and serve
         if os.path.isfile(abs_path):
