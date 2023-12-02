@@ -1,0 +1,29 @@
+---
+# Control Server
+control_server:
+  address: "localhost"
+  user: "owner"
+  web_credentials:
+    - username: "admin"
+      password: "admin"
+
+# Home Alert Node Definitions
+home_alert_nodes:
+  - location: "laptop"
+    address: "localhost"
+    server_port: 5000
+    user: "owner"
+    cam_type: "usb"
+    video_options:
+      source: "/dev/video0"
+      width: 1280
+      height: 720
+      input_format: "mjpeg"
+      framerate: 10
+      hls_segment_time: 0.5
+      duration: 3600
+    audio_options:
+      source: "hw:0"
+      channels: 2
+      bitrate: 128
+

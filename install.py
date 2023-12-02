@@ -111,7 +111,7 @@ def main():
                         help='Do not actually install on target hosts, '
                              'Generates all resources needed to run the '
                              'ansible playbook for installation.')
-    parser.add_argument('--ask_sudo_pass', default=False, action='store_true',
+    parser.add_argument('-asp', '--ask_sudo_pass', default=False, action='store_true',
                         help='Ask for the sudo password on remote machines. '
                              'Used if an installation target host cannot '
                              'execute passwordless sudo as the user provided.')
@@ -138,12 +138,12 @@ def main():
 
     for home_alert_node in config['home_alert_nodes']:
         # Generate trigger resources
-        create_triggers(home_alert_node, config['control_server'], config['wifi'])
+        create_triggers(home_alert_node, config['control_server'], config.get('wifi'))
 
         # Build node config file
         home_alert_node_config = {}
-        home_alert_node_config['notify_emails'] = config['notify_emails']
-        home_alert_node_config['smtp_info'] = config['smtp_info']
+        home_alert_node_config['notify_emails'] =config.get('notify_emails')
+        home_alert_node_config['smtp_info'] = config.get('smtp_info')
         home_alert_node_config['home_alert_node'] = home_alert_node
         home_alert_node_config['control_server'] = config['control_server']['address'] 
         home_alert_node_config_path = os.path.join(REPO_PATH, 'ansible/group_vars/' + home_alert_node['location'] + '.yml')

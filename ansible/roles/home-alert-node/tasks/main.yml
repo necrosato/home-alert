@@ -39,6 +39,8 @@
   script: install_pip.sh
 
 - name: install home alert node python dependencies
+  become: yes
+  become_user: home-alert
   pip:
     name:
       - flask

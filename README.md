@@ -5,21 +5,23 @@ An open source security system powered by a low cost distributed iot system.
 ## Prerequisites
 
 Some steps must be taken on each host that is going to have home alert software installed on it.
-1. Setup passwordless sudo for a user:
+1. Setup sudo for a user on every install target (all users must have the same password):
  * `$ sudo usermod -aG sudo user`
- * Add the line `user ALL=(ALL) NOPASSWD: ALL` to /etc/sudoers
+ * Optional - Add the line `user ALL=(ALL) NOPASSWD: ALL` to /etc/sudoers
 2. Ensure that the host used to deploy the installation can ssh into each of the users of the target hosts via ssh keys.
-3. Install ansible and python
+3. Install ansible and python on machine performing installation
  * `$ sudo apt-get install ansible python`
 
 ## Installation
 
-To install the home alert security system software on your own hosts, first copy and modify the [example configuration yaml file](./config_example.yaml).
+To install the home alert security system software on your own hosts, first copy and modify the [example configuration yaml file](./config_example.yml).
+Then run install.py. If all the hosts have passwordless sudo setup, then
 ```
-git clone https://github.com/necrosato/home-alert /tmp/home-alert
-cd /tmp/home-alert
-# Copy and modify config file ...
-python3 install.py -c /path/to/config/file
+python3 install.py -c ./config.yml 
+```
+otherwise they must all have the same password, you will be prompted for it when you
+```
+python3 install.py -c ./config.yml --ask_sudo_pass
 ```
 
 Python modules needed to create playbook:

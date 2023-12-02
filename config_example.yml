@@ -2,23 +2,14 @@
 # This is the main configuration file for the entire Home Alert system.
 # Users should not have to manually edit any other files in this repo but this one.
 
-# WiFi Credentials
-wifi:
-  ssid: "ssid"
-  password: "password"
-
 # Control Server
 control_server:
-  address: "10.0.0.138"
-  user: "pi"
+  address: "localhost"
+  user: "user"
   web_credentials:
     # Can have multiple logins to the control server
-    - username: "admin"
-      password: "admin"
-
-# List of emails to send notifications when a location is triggered.
-notify_emails:
-  - "example@gmail.com"
+    - username: "username"
+      password: "password"
 
 # Home Alert Node Definitions
 home_alert_nodes:
@@ -26,17 +17,15 @@ home_alert_nodes:
   # Location is an arbitrary identifier grouping a node and trigger
   - location: "location"
     # Address of home alert node target host
-    address: "10.0.0.138"
+    address: "localhost"
     # Port to run home alert application
     server_port: 5000
     # Username of user with passwordless sudo, for ansible
-    user: "pi"
-
+    user: "user"
     # Type of camera:
     #   "usb" = usb webcam
     #   "pi" = Raspberry Pi camera module
-    cam_type: "pi"
-
+    cam_type: "usb"
     # The video device to use for video capture
     video_options:
       source: "/dev/video0"
@@ -44,32 +33,45 @@ home_alert_nodes:
       height: 720
       input_format: "mjpeg"
       framerate: 30
-      hls_segment_time: 5
-      duration: 600
+      # how long video chunks should be in seconds
+      # default 0.5 second chunks for 1 hour before a new folder and manifest is created
+      hls_segment_time: 0.5
+      duration: 3600
+    # This entire block is optional if there is no microphone or soundcard
     audio_options:
-      source: "hw:1"
+      source: "hw:0"
+      # 1 for mono, 2 for stereo capable cards
       channels: 2
       bitrate: 128
+    ### EVERYTHING BELOW IS OPTIONAL -  DELETE IF NOT USING ESP TRIGGERS ###
+    triggers:
+      # triggers may contain the following keys
+      # esp8266: Generate an arduino sketch for this node location. Web credentials will be generated.
+      esp8266:
+        # The digital pin to use on the board
+        pin: "D6"
 
-    # Optionally set up a trigger, uncomment to define
-    # triggers:
-    #   # triggers may contain the following keys
-    #   # esp8266: Generate an arduino sketch for this node location. Web credentials will be generated.
-    #   esp8266:
-    #     # The digital pin to use on the board
-    #     pin: "D6"
+### EVERYTHING BELOW IS OPTIONAL -  DELETE IF NOT USING ESP TRIGGERS ###
+# WiFi Credentials
+wifi:
+  ssid: "ssid"
+  password: "password"
 
+### EVERYTHING BELOW IS OPTIONAL -  DELETE IF NOT USING EMAIL NOTIFICATION ###
 # Email to send notifications from
 smtp_info:
   host: "smtp.gmail.com"
   port: 587
   user_address: "example@gmail.com"
   user_pass: "password"
+# List of emails to send notifications when a location is triggered.
+notify_emails:
+  - "example@gmail.com"
 
-# Optionally provide aws credentials and a bucket to upload captured media
-# Uncomment and fill out to define
-# aws:
-#   s3_upload_bucket: ""
-#   region: ""
-#   aws_access_key_id: ""
-#   aws_secret_access_key: ""
+### EVERYTHING BELOW IS OPTIONAL -  DELETE IF NOT USING S3 STORAGE ###
+# provide aws credentials and a bucket to upload captured media
+aws:
+  s3_upload_bucket: ""
+  region: ""
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
