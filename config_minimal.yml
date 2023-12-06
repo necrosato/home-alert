@@ -1,4 +1,5 @@
 ---
+logging_dir: /tmp/home-alert/
 # Control Server
 control_server:
   address: "localhost"
@@ -16,8 +17,8 @@ home_alert_nodes:
     cam_type: "usb"
     video_options:
       source: "/dev/video0"
-      width: 1280
-      height: 720
+      width: 640
+      height: 360
       input_format: "mjpeg"
       framerate: 10
       hls_segment_time: 0.5
@@ -25,5 +26,5 @@ home_alert_nodes:
     audio_options:
       source: "hw:0"
       channels: 2
-      bitrate: 128
+      bitrate: 128k
 

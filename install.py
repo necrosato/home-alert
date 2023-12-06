@@ -146,6 +146,7 @@ def main():
         home_alert_node_config['smtp_info'] = config.get('smtp_info')
         home_alert_node_config['home_alert_node'] = home_alert_node
         home_alert_node_config['control_server'] = config['control_server']['address'] 
+        home_alert_node_config['logging_dir'] = config.get('logging_dir') 
         home_alert_node_config_path = os.path.join(REPO_PATH, 'ansible/group_vars/' + home_alert_node['location'] + '.yml')
         if 'aws' in config:
             home_alert_node_config['s3_upload_bucket'] = config['aws']['s3_upload_bucket']

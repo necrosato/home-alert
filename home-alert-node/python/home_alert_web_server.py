@@ -8,7 +8,6 @@ import datetime
 import pytz
 import threading
 
-import home_alert_logging
 from home_alert_camera import HomeAlertCamera
 import aws_utils
 import pprint
@@ -48,13 +47,13 @@ class HomeAlertWebServer:
     '''
     Class holding a flask app and smtp server
     '''
-    def __init__(self, location, smtp_info, camera, notify_emails, http_logging = False, s3_bucket = None):
+    def __init__(self, location, smtp_info, camera, notify_emails, http_logging = False, s3_bucket = None, logger = None):
         '''
         location - string
         smtp_info - path to yaml file
         camera - HomeAlertCamera Object
         '''
-        self.logger = home_alert_logging.GetHomeAlertLogger("Home Alert Node - {}".format(location))
+        self.logger = logger
         self.location = location
         self.smtp_info = smtp_info
         self.camera = camera
@@ -226,6 +225,7 @@ class HomeAlertWebServer:
         '''
         Run the flask app
         '''
+        self.logger.info("Running Web Server")
         self.app.run(debug=False, host='0.0.0.0', port=port)
 
 

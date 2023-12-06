@@ -14,9 +14,8 @@ def main():
                         help='Enable debug http request logging.')
     args = parser.parse_args()
 
-    logger = home_alert_logging.GetHomeAlertLogger()
-    logger.info("Loading config file")
     config = yaml.safe_load(open(args.config, 'r'))
+    logger = home_alert_logging.GetLogger(logging_dir=config.get('logging_dir'))
 
     audio_options = {}
     if 'audio_options' in config['home_alert_node']:
@@ -32,9 +31,8 @@ def main():
 
     logger.info("Creating HomeAlertWebServer")
     location = config['home_alert_node']['location']
-    home_alert = HomeAlertWebServer(location, smtp_info, camera, notify_emails, args.http_logging, s3_bucket)
+    home_alert = HomeAlertWebServer(location, smtp_info, camera, notify_emails, args.http_logging, s3_bucket, logger=logger)
     # Start web server
-    logger.info("Running Web Server")
     port = config['home_alert_node']['server_port']
     home_alert.run(port)
 

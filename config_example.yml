@@ -2,6 +2,8 @@
 # This is the main configuration file for the entire Home Alert system.
 # Users should not have to manually edit any other files in this repo but this one.
 
+logging_dir: /tmp/home-alert/
+
 # Control Server
 control_server:
   address: "localhost"
@@ -42,7 +44,7 @@ home_alert_nodes:
       source: "hw:0"
       # 1 for mono, 2 for stereo capable cards
       channels: 2
-      bitrate: 128
+      bitrate: 128k
     ### EVERYTHING BELOW IS OPTIONAL -  DELETE IF NOT USING ESP TRIGGERS ###
     triggers:
       # triggers may contain the following keys
