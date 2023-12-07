@@ -16,20 +16,36 @@
     enabled: yes
     state: started
 
-- name: copy default nginx site config from template
+- name: copy home-alert nginx site config from template
   template:
-    src: default.j2
-    dest: /etc/nginx/sites-available/default
+    src: home-alert-control-site.j2
+    dest: /etc/nginx/sites-available/home-alert-control-site
     owner: root
     group: root
     mode: 0644
   notify:
     restart nginx
 
+- name: link home-alert nginx site config from available to enabled 
+  file:
+    src: /etc/nginx/sites-available/home-alert-control-site
+    dest: /etc/nginx/sites-enabled/home-alert-control-site
+    state: link 
+  notify:
+    restart nginx
+
+- name: create home alert www directory
+  file:
+    path: "/var/www/html/home-alert"
+    state: directory
+    owner: root
+    group: root
+
+
 - name: copy index.html from template
   template:
     src: index.html.j2
-    dest: /var/www/html/index.html
+    dest: /var/www/html/home-alert/index.html
     owner: root
     group: root
     mode: 0644
@@ -37,7 +53,7 @@
 - name: copy all_streams.html from template
   template:
     src: all_streams.html.j2
-    dest: /var/www/html/all_streams.html
+    dest: /var/www/html/home-alert/all_streams.html
     owner: root
     group: root
     mode: 0644

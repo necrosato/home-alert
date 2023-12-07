@@ -1,11 +1,10 @@
 # Default server configuration
 #
 server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
+	listen 80;
+	listen [::]:80;
 
-	root /var/www/html;
-
+	root /var/www/html/home-alert;
 	index index.html;
 
 	server_name _;
