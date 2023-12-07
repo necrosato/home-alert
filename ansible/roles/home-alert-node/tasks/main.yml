@@ -16,7 +16,6 @@
       - python-setuptools
       - cron
       - ffmpeg
-      - iptables-persistent
     update_cache: yes
 
 - name: enable sshd 
@@ -25,13 +24,6 @@
     name: ssh 
     enabled: yes
   become: yes
-
-- name: enable netfilter-persistent service 
-  ansible.builtin.systemd:
-    state: started
-    name: netfilter-persistent 
-    enabled: yes
-  become: yes 
 
 # Have to use get-pip.py as apt's version throws errors.
 # See https://stackoverflow.com/questions/37495375/python-pip-install-throws-typeerror-unsupported-operand-types-for-retry
@@ -134,25 +126,3 @@
     hour: "2"
     user: home-alert
     job: "{{ home_alert_dir }}/clean_storage.sh -d {{ video_dir }} -n 2"
-
-- name: allow traffic from control server to web server 
-  ansible.builtin.iptables:
-    chain: INPUT
-    source: "{{ control_server.address }}"
-    destination_port: "{{ home_alert_node.server_port }}"
-    protocol: tcp
-    jump: ACCEPT
-  become: yes
-
-- name: block all connections to web server
-  ansible.builtin.iptables:
-    chain: INPUT
-    source: 0.0.0.0/0
-    destination_port: "{{ home_alert_node.server_port }}"
-    protocol: tcp
-    jump: DROP
-  become: yes
-
-- name: persist iptables rules
-  shell: "iptables-save > /etc/iptables/rules.v4"
-  become: yes

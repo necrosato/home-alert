@@ -226,7 +226,7 @@ class HomeAlertWebServer:
         Run the flask app
         '''
         self.logger.info("Running Web Server")
-        self.app.run(debug=False, host='0.0.0.0', port=port)
+        self.app.run(debug=False, host='127.0.0.1', port=port)
 
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, **options):
