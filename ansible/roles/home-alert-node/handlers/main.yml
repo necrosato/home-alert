@@ -5,3 +5,10 @@
     name: home-alert.service
     enabled: yes
     state: restarted
+
+- name: restart home-alert-tunnel service
+  service:
+    daemon_reload: yes
+    name: home-alert-tunnel.service
+    enabled: yes
+    state: restarted

@@ -1,0 +1,8 @@
+ssh -N \
+    -tt \
+    -i ~/.ssh/id_rsa \
+    -R localhost:{{ home_alert_node.remote_port }}:localhost:{{ home_alert_node.server_port }} \
+    -o StrictHostKeyChecking=accept-new \
+    -o ExitOnForwardFailure=yes \
+    -o ConnectTimeout=5 \
+    {{ control_server.user }}@{{ control_server.address }}

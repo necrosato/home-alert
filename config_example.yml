@@ -22,6 +22,8 @@ home_alert_nodes:
     address: "localhost"
     # Port to run home alert application
     server_port: 5000
+    # Port to use for control server remote tunnel
+    remote_port: 6000
     # Username of user with passwordless sudo, for ansible
     user: "user"
     # Type of camera:

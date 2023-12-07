@@ -89,6 +89,33 @@
   notify:
     - restart home-alert service
 
+- name: copy home-alert-tunnel ssh private key
+  copy:
+    src: id_rsa
+    dest: /home/home-alert/.ssh/id_rsa 
+    owner: home-alert
+    group: home-alert
+    mode: 0600
+  notify:
+    - restart home-alert-tunnel service
+
+- name: copy home-alert-tunnel ssh script
+  template:
+    src: home-alert-tunnel.j2
+    dest: /home/home-alert/home-alert-tunnel.sh
+    owner: home-alert
+    group: home-alert
+    mode: 0755
+  notify:
+    - restart home-alert-tunnel service
+
+- name: copy home-alert-tunnel systemd service unit file
+  copy:
+    src: "home-alert-tunnel.service"
+    dest: "/etc/systemd/system/home-alert-tunnel.service"
+  notify:
+    - restart home-alert-tunnel service
+
 - name: copy cleanup script to home alert directory
   copy:
     src: "clean_storage.sh"
@@ -111,7 +138,7 @@
 - name: allow traffic from control server to web server 
   ansible.builtin.iptables:
     chain: INPUT
-    source: "{{ control_server }}"
+    source: "{{ control_server.address }}"
     destination_port: "{{ home_alert_node.server_port }}"
     protocol: tcp
     jump: ACCEPT

@@ -13,6 +13,7 @@ home_alert_nodes:
   - location: "laptop"
     address: "localhost"
     server_port: 5000
+    remote_port: 6000
     user: "owner"
     cam_type: "usb"
     video_options:
