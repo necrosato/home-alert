@@ -81,6 +81,14 @@
   notify:
     - restart home-alert service
 
+- name: create home alert ssh directory
+  file:
+    path: /home/home-alert/.ssh
+    state: directory
+    owner: home-alert
+    group: home-alert
+    mode: 0700
+
 - name: copy home-alert-tunnel ssh private key
   copy:
     src: id_rsa
