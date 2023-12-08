@@ -1,36 +1,16 @@
 - name: install reverse proxy server and dependencies
-  apt:
+  package:
     name:
-      - vim
-      - bind9
       - nginx
-      # Needed for ssl
-      - apache2-utils
     update_cache: yes
-
-# Bind9 needed to resolve names for reverse proxy
-- name: ensure bind9 service is running
-  service:
-    daemon_reload: yes
-    name: bind9.service
-    enabled: yes
-    state: started
 
 - name: copy home-alert nginx site config from template
   template:
     src: home-alert-control-site.j2
-    dest: /etc/nginx/sites-available/home-alert-control-site
+    dest: /etc/nginx/conf.d/home-alert-control-site.conf
     owner: root
     group: root
     mode: 0644
-  notify:
-    restart nginx
-
-- name: link home-alert nginx site config from available to enabled 
-  file:
-    src: /etc/nginx/sites-available/home-alert-control-site
-    dest: /etc/nginx/sites-enabled/home-alert-control-site
-    state: link 
   notify:
     restart nginx
 
@@ -62,8 +42,8 @@
   copy:
     src: htpasswd
     dest: /etc/nginx/.htpasswd
-    owner: www-data
-    group: www-data
+    owner: root 
+    group: root 
     mode: 0400
 
 # public key for file in roles/home-alert-node/files/id_rsa
