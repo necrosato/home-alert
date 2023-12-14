@@ -91,7 +91,7 @@
 
 - name: copy home-alert-tunnel ssh private key
   copy:
-    src: id_rsa
+    src: vars/id_rsa
     dest: /home/home-alert/.ssh/id_rsa 
     owner: home-alert
     group: home-alert
