@@ -16,7 +16,7 @@
 
 - name: create home alert www directory
   file:
-    path: "/var/www/html/home-alert"
+    path: "{{ html_dir }}"
     state: directory
     owner: root
     group: root
@@ -25,7 +25,7 @@
 - name: copy index.html from template
   template:
     src: index.html.j2
-    dest: /var/www/html/home-alert/index.html
+    dest: "{{ html_dir }}/index.html"
     owner: root
     group: root
     mode: 0644
@@ -33,7 +33,7 @@
 - name: copy all_streams.html from template
   template:
     src: all_streams.html.j2
-    dest: /var/www/html/home-alert/all_streams.html
+    dest: "{{ html_dir }}/all_streams.html"
     owner: root
     group: root
     mode: 0644
@@ -45,9 +45,3 @@
     owner: nginx
     group: nginx
     mode: 0400
-
-- name: Set authorized key from file
-  authorized_key:
-    user: "{{ control_server.user }}"
-    state: present
-    key: "{{ lookup('file', 'vars/id_rsa.pub') }}"

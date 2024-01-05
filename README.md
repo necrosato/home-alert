@@ -14,9 +14,6 @@ Some steps must be taken on each host that is going to have home alert software 
 
 ## Installation
 
-First generate ssh keys:
-```
-ssh-keygen -t rsa -N "" -C "home-alert" -f ./ansible/vars/id_rsa
 ```
 To install the home alert security system software on your own hosts, first copy and modify the [example configuration yaml file](./config_example.yml).
 Then run install.py. If all the hosts have passwordless sudo setup, then
